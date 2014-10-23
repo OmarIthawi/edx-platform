@@ -1,8 +1,9 @@
 /* JavaScript for editing operations that can be done on the split test author view. */
 window.SplitTestAuthorView = function (runtime, element) {
     var $element = $(element);
+    var splitTestLocator = $element.closest('.studio-xblock-wrapper').data('locator');
 
-    $element.find('.add-missing-groups-button').click(function () {
+    runtime.listenTo("add-missing-groups", function (parentLocator) {
         runtime.notify('save', {
             state: 'start',
             element: element,
@@ -18,8 +19,7 @@ window.SplitTestAuthorView = function (runtime, element) {
 
     // Listen to delete events so that the view can refresh when the last inactive group is removed.
     runtime.listenTo('deleted-child', function(parentLocator) {
-        var splitTestLocator = $element.closest('.studio-xblock-wrapper').data('locator'),
-            inactiveGroups = $element.find('.is-inactive .studio-xblock-wrapper');
+        var inactiveGroups = $element.find('.is-inactive .studio-xblock-wrapper');
         if (splitTestLocator === parentLocator && inactiveGroups.length === 0) {
             runtime.refreshXBlock($element);
         }
