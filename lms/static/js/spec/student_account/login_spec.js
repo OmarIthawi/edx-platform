@@ -1,42 +1,47 @@
-define(['js/common_helpers/template_helpers', 'js/student_account/views/LoginView'],
-    function(TemplateHelpers) {
-        describe("edx.student.account.LoginView", function() {
+define([
+    'js/common_helpers/template_helpers',
+    'js/common_helpers/ajax_helpers',
+    'js/student_account/models/LoginModel',
+    'js/student_account/views/LoginView',
+    'js/student_account/views/FormView'
+], function(TemplateHelpers, AjaxHelpers, LoginModel, LoginView) {
+        describe('Login View', function() {
             'use strict';
 
             beforeEach(function() {
-                setFixtures("<div></div>");
-                TemplateHelpers.installTemplate("templates/student_account/login");
+                setFixtures('<div></div>');
+                TemplateHelpers.installTemplate('templates/student_account/login');
             });
 
-            it("logs the user in", function() {
+            it('logs the user in', function() {
                 // TODO
             });
 
-            it("displays third party auth login buttons", function() {
+            it('displays third party auth login buttons', function() {
                 // TODO
             });
 
-            it("validates the email field", function() {
+            it('validates the email field', function() {
                 // TODO
             });
 
-            it("validates the password field", function() {
+            it('validates the password field', function() {
                 // TODO
             });
 
-            it("displays login errors", function() {
+            it('displays login errors', function() {
                 // TODO
             });
 
-            it("displays an error if the form definition could not be loaded", function() {
+            it('displays an error if the form definition could not be loaded', function() {
                 // TODO
             });
 
-            it("displays an error if the server could not be contacted while logging in", function() {
+            it('displays an error if the server could not be contacted while logging in', function() {
                 // TODO
             });
 
-            it("allows the user to navigate to the password assistance form", function() {
+            it('allows the user to navigate to the password assistance form', function() {
                 // TODO
             });
 

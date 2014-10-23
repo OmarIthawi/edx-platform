@@ -1,6 +1,6 @@
 var edx = edx || {};
 
-(function($, _, Backbone, gettext) {
+(function($, Backbone) {
     'use strict';
 
     edx.student = edx.student || {};
@@ -27,6 +27,7 @@ var edx = edx || {};
             $.ajax({
                 url: model.urlRoot,
                 type: 'POST',
+                // Should this be model.get('email')? The URL doesn't need to be in this data
                 data: model.attributes,
                 headers: headers
             })
@@ -38,4 +39,4 @@ var edx = edx || {};
             });
         }
     });
-})(jQuery, _, Backbone, gettext);
+})(jQuery, Backbone);

@@ -1,34 +1,39 @@
-define(['js/common_helpers/template_helpers', 'js/student_account/views/RegisterView'],
-    function(TemplateHelpers) {
-        describe("edx.student.account.RegisterView", function() {
+define([
+    'js/common_helpers/template_helpers',
+    'js/common_helpers/ajax_helpers',
+    'js/student_account/models/RegisterModel',
+    'js/student_account/views/RegisterView',
+    'js/student_account/views/FormView'
+], function(TemplateHelpers, AjaxHelpers, RegisterModel, RegisterView) {
+        describe('Register View', function() {
             'use strict';
 
             beforeEach(function() {
-                setFixtures("<div></div>");
-                TemplateHelpers.installTemplate("templates/student_account/register");
+                setFixtures('<div></div>');
+                TemplateHelpers.installTemplate('templates/student_account/register');
             });
 
-            it("registers a new user", function() {
+            it('registers a new user', function() {
                 // TODO
             });
 
-            it("displays third party auth registration buttons", function() {
+            it('displays third party auth registration buttons', function() {
                 // TODO
             });
 
-            it("validates form fields", function() {
+            it('validates form fields', function() {
                 // TODO
             });
 
-            it("displays registration errors", function() {
+            it('displays registration errors', function() {
                 // TODO
             });
 
-            it("displays an error if the form definition could not be loaded", function() {
+            it('displays an error if the form definition could not be loaded', function() {
                 // TODO
             });
 
-            it("displays an error if the server could not be contacted while registering", function() {
+            it('displays an error if the server could not be contacted while registering', function() {
                 // TODO
             });
         });

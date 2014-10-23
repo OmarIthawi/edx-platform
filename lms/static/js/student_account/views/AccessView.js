@@ -1,6 +1,6 @@
 var edx = edx || {};
 
-(function($, _, Backbone, gettext) {
+(function($, _, StringTools, Backbone, gettext) {
     'use strict';
 
     edx.student = edx.student || {};
@@ -29,7 +29,7 @@ var edx = edx || {};
              * (all but include, contains, and reverse) into the
              * Underscore namespace
              */
-            _.mixin(_.str.exports())
+            _.mixin(StringTools.exports())
 
             this.tpl = $(this.tpl).html();
             this.activeForm = obj.mode || 'login';
@@ -164,4 +164,4 @@ var edx = edx || {};
         }
     });
 
-})(jQuery, _, Backbone, gettext);
+})(jQuery, _, _.str, Backbone, gettext);

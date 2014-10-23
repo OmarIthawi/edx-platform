@@ -1,6 +1,6 @@
 var edx = edx || {};
 
-(function($, _, Backbone, gettext) {
+(function($, Backbone) {
     'use strict';
 
     edx.student = edx.student || {};
@@ -64,4 +64,4 @@ var edx = edx || {};
             });
         }
     });
-})(jQuery, _, Backbone, gettext);
+})(jQuery, Backbone);

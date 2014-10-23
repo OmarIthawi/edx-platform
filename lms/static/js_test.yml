@@ -49,6 +49,7 @@ lib_paths:
     - xmodule_js/src/xmodule.js
     - xmodule_js/common_static/js/src/
     - xmodule_js/common_static/js/vendor/underscore-min.js
+    - xmodule_js/common_static/js/vendor/underscore.string.min.js
     - xmodule_js/common_static/js/vendor/backbone-min.js
 
 # Paths to source JavaScript files

@@ -1,6 +1,6 @@
 define(['js/student_account/account'],
     function() {
-        describe("edx.student.account.AccountModel", function() {
+        describe("Account Model", function() {
             'use strict';
 
             var account = null;
@@ -84,7 +84,7 @@ define(['js/student_account/account'],
         });
 
 
-        describe("edx.student.account.AccountView", function() {
+        describe("Account View", function() {
             var view = null,
                 ajaxSuccess = true;
 

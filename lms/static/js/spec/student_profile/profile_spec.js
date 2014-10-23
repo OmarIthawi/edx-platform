@@ -1,6 +1,6 @@
 define(['js/student_profile/profile'],
     function() {
-        describe("edx.student.profile.ProfileModel", function() {
+        describe("Profile Model", function() {
             'use strict';
 
             var profile = null;
@@ -46,7 +46,7 @@ define(['js/student_profile/profile'],
             });
         });
 
-        describe("edx.student.profile.ProfileView", function() {
+        describe("Profile View", function() {
             var view = null,
                 ajaxSuccess = true;
 
