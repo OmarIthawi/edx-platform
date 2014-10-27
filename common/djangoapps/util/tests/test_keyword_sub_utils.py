@@ -54,7 +54,7 @@ class KeywordSubTest(ModuleStoreTestCase):
             '%%COURSE_END_DATE%%': course_end_date_sub
         }
 
-    @file_data('data/test_keyword_coursename_sub.json')
+    @file_data('fixtures/test_keyword_coursename_sub.json')
     def test_course_name_sub(self, test_info):
         """ Tests subbing course name in various scenarios """
         course_name = self.course.display_name
@@ -63,7 +63,7 @@ class KeywordSubTest(ModuleStoreTestCase):
         self.assertIn(course_name, result)
         self.assertEqual(result, test_info['expected'])
 
-    @file_data('data/test_keyword_anonid_sub.json')
+    @file_data('fixtures/test_keyword_anonid_sub.json')
     def test_anonymous_id_subs(self, test_info):
         """ Tests subbing anon user id in various scenarios """
         anon_id = '123456789'
@@ -99,7 +99,7 @@ class KeywordSubTest(ModuleStoreTestCase):
 
         self.assertEquals(test_string, result)
 
-    @file_data('data/test_keywordsub_multiple_tags.json')
+    @file_data('fixtures/test_keywordsub_multiple_tags.json')
     def test_sub_mutiltple_tags(self, test_info):
         """ Test that subbing works with multiple subtags """
         anon_id = '123456789'
@@ -126,3 +126,16 @@ class KeywordSubTest(ModuleStoreTestCase):
 
         self.assertNotIn(self.user.profile.name, result)
         self.assertIn('%%USER_FULLNAME%%', result)
+
+    def test_no_subbing_no_userid_or_courseid(self):
+        """
+        Tests that no subbing occurs if no user_id is given.
+        """
+        user_id = None
+        test_string = 'This string should not be subbed here %%USER_ID%%'
+
+        result = Ks.substitute_keywords_with_data(test_string, None, self.course.id)
+        self.assertEqual(test_string, result)
+
+        result = Ks.substitute_keywords_with_data(test_string, self.user.id, None)
+        self.assertEqual(test_string, result)
