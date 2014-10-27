@@ -29,7 +29,7 @@ def keyword_function_map_is_empty():
     """
     Checks if the keyword function map has been filled
     """
-    return bool(KEYWORD_FUNCTION_MAP)
+    return not bool(KEYWORD_FUNCTION_MAP)
 
 def add_keyword_function_map(mapping):
     """
