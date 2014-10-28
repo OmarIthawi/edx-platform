@@ -23,12 +23,10 @@ from xmodule.fields import RelativeTime
 
 from xmodule.errortracker import exc_info_to_str
 from xmodule.modulestore.exceptions import ItemNotFoundError
+from xmodule.validation_messages import ValidationMessages
 from opaque_keys.edx.keys import UsageKey
 from xmodule.exceptions import UndefinedContext
 import dogstats_wrapper as dog_stats_api
-
-# Make '_' a no-op so we can scrape strings
-_ = lambda text: text
 
 log = logging.getLogger(__name__)
 
@@ -447,7 +445,10 @@ class XModuleMixin(XBlockMixin):
         self._field_data = field_data
 
     def validation_messages(self):
-        return {}
+        return ValidationMessages()
+        # inherited_validation_messages = ValidationMessages()
+        # inherited_validation_messages.add_detailed_message(u"All xblocks are evil!", ValidationMessages.warning_type)
+        # return inherited_validation_messages
 
 
 class ProxyAttribute(object):
@@ -491,48 +492,6 @@ class ProxyAttribute(object):
 
     def __delete__(self, instance):
         delattr(getattr(instance, self._source), self._name)
-
-
-class ValidationMessageType(object):
-    """
-    The type for a validation message -- currently 'information', 'warning' or 'error'.
-    """
-    information = 'information'
-    warning = 'warning'
-    error = 'error'
-
-    @staticmethod
-    def display_name(message_type):
-        """
-        Returns the display name for the specified validation message type.
-        """
-        if message_type == ValidationMessageType.warning:
-            # Translators: This message will be added to the front of messages of type warning,
-            # e.g. "Warning: this component has not been configured yet".
-            return _(u"Warning")
-        elif message_type == ValidationMessageType.error:
-            # Translators: This message will be added to the front of messages of type error,
-            # e.g. "Error: required field is missing".
-            return _(u"Error")
-        else:
-            return None
-
-
-# TODO: move this into the xblock repo once it has a formal validation contract
-class ValidationMessage(object):
-    """
-    Represents a single validation message for an xblock.
-    """
-    def __init__(self, xblock, message_text, message_type, action_class=None, action_label=None):
-        assert isinstance(message_text, unicode)
-        self.xblock = xblock
-        self.message_text = message_text
-        self.message_type = message_type
-        self.action_class = action_class
-        self.action_label = action_label
-
-    def __unicode__(self):
-        return self.message_text
 
 
 module_attr = partial(ProxyAttribute, '_xmodule')  # pylint: disable=invalid-name
@@ -1023,8 +982,6 @@ class XModuleDescriptor(XModuleMixin, HTMLSnippet, ResourceTemplates, XBlock):
     student_view = module_attr(STUDENT_VIEW)
     get_child_descriptors = module_attr('get_child_descriptors')
     xmodule_handler = module_attr('xmodule_handler')
-
-
 
     # ~~~~~~~~~~~~~~~ XBlock API Wrappers ~~~~~~~~~~~~~~~~
     def studio_view(self, _context):
