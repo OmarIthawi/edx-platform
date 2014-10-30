@@ -8,8 +8,9 @@ from rest_framework.authentication import OAuth2Authentication, SessionAuthentic
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-from courseware.access import has_access
 from student.models import CourseEnrollment, User
+from student.roles import CourseBetaTesterRole
+from student import auth
 
 from .serializers import CourseEnrollmentSerializer, UserSerializer
 
@@ -124,7 +125,11 @@ def mobile_course_enrollments(enrollments, user):
     """
     for enr in enrollments:
         course = enr.course
+
+        # Implicitly includes staff and instructor roles via the following has_access check
+        role = CourseBetaTesterRole(course.id)
+
         # The course doesn't always really exist -- we can have bad data in the enrollments
         # pointing to non-existent (or removed) courses, in which case `course` is None.
-        if course and (course.mobile_available or has_access(user, 'staff', course)):
+        if course and (course.mobile_available or auth.has_access(user, role)):
             yield enr
