@@ -1,6 +1,8 @@
 """
 Tests for users API
 """
+
+import ddt
 from rest_framework.test import APITestCase
 from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
@@ -11,6 +13,8 @@ from student.models import CourseEnrollment
 from student import auth
 
 
+
+@ddt.ddt
 class TestUserApi(ModuleStoreTestCase, APITestCase):
     """
     Test the user info API
@@ -40,27 +44,29 @@ class TestUserApi(ModuleStoreTestCase, APITestCase):
         })
         self.assertEqual(resp.status_code, 200)
 
-    def _verify_single_course(self, courses, expected_course):
+    def _verify_single_course_enrollment(self, course):
         """
-        check that courses matches expected_course
+        check that enrolling in course adds us to it
         """
+
+        url = self._enrollmentURL()
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get(url)
+        self._enroll(course)
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+
+        courses = response.data   # pylint: disable=maybe-no-member
         self.assertEqual(len(courses), 1)
-        course = courses[0]['course']
-        self.assertTrue('video_outline' in course)
-        self.assertTrue('course_handouts' in course)
-        self.assertEqual(course['id'], expected_course.id.to_deprecated_string())
+
+        found_course = courses[0]['course']
+        self.assertTrue('video_outline' in found_course )
+        self.assertTrue('course_handouts' in found_course )
+        self.assertEqual(found_course ['id'], course.id.to_deprecated_string())
         self.assertEqual(courses[0]['mode'], 'honor')
 
-    def test_beta_enrollments(self):
-        self._test_privileged_enrollments(auth.CourseBetaTesterRole)
-
-    def test_staff_enrollments(self):
-        self._test_privileged_enrollments(auth.CourseStaffRole)
-
-    def test_instructor_enrollments(self):
-        self._test_privileged_enrollments(auth.CourseInstructorRole)
-
-    def _test_privileged_enrollments(self, role):
+    def test_non_mobile_enrollments(self):
         url = self._enrollmentURL()
         non_mobile_course = CourseFactory.create(mobile_available=False)
         self.client.login(username=self.username, password=self.password)
@@ -68,36 +74,24 @@ class TestUserApi(ModuleStoreTestCase, APITestCase):
         self._enroll(non_mobile_course)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, []) # pylint: disable=E1103
+        self.assertEqual(response.data, [])
 
+    @ddt.data(auth.CourseBetaTesterRole, auth.CourseStaffRole, auth.CourseInstructorRole)
+    def test_privileged_enrollments(self, role):
+        non_mobile_course = CourseFactory.create(mobile_available=False)
         role(non_mobile_course.id).add_users(self.user)
 
-        response = self.client.get(url)
-        courses = response.data # pylint: disable=E1103
-        self._verify_single_course(courses, non_mobile_course)
+        self._verify_single_course_enrollment(non_mobile_course)
 
     def test_mobile_enrollments(self):
-        url = self._enrollmentURL()
-
-        self.client.login(username=self.username, password=self.password)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, [])  # pylint: disable=E1103
-
-        self._enroll(self.course)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        courses = response.data  # pylint: disable=E1103
-
-        self._verify_single_course(courses, self.course)
+        self._verify_single_course_enrollment(self.course)
 
     def test_user_overview(self):
         self.client.login(username=self.username, password=self.password)
         url = reverse('user-detail', kwargs={'username': self.user.username})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        data = response.data  # pylint: disable=E1103
+        data = response.data  # pylint: disable=maybe-no-member
         self.assertEqual(data['username'], self.user.username)
         self.assertEqual(data['email'], self.user.email)
 

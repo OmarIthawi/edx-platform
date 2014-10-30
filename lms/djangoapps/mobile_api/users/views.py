@@ -120,8 +120,10 @@ def my_user_info(request):
 
 def mobile_course_enrollments(enrollments, user):
     """
-    Return enrollments only if courses are mobile_available (or if the user has staff access)
-    enrollments is a list of CourseEnrollments.
+    Return enrollments only if courses are mobile_available (or if the user has
+    privileged (beta, staff, instructor) access)
+
+    :param enrollments is a list of CourseEnrollments.
     """
     for enr in enrollments:
         course = enr.course
