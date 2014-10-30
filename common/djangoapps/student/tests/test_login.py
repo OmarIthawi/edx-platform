@@ -12,8 +12,14 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.http import HttpResponseBadRequest, HttpResponse
+import httpretty
+from social.apps.django_app.default.models import UserSocialAuth
 from student.tests.factories import UserFactory, RegistrationFactory, UserProfileFactory
-from student.views import _parse_course_id_from_string, _get_course_enrollment_domain
+from student.views import (
+    _parse_course_id_from_string,
+    _get_course_enrollment_domain,
+    login_oauth_token,
+)
 
 from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase, mixed_store_config
@@ -430,3 +436,70 @@ class ExternalAuthShibTest(ModuleStoreTestCase):
         self.assertEqual(shib_response.redirect_chain[-2],
                          ('http://testserver{url}'.format(url=TARGET_URL_SHIB), 302))
         self.assertEqual(shib_response.status_code, 200)
+
+
+@httpretty.activate
+class LoginOAuthTokenMixin(object):
+    def setUp(self):
+        self.client = Client()
+        self.url = reverse(login_oauth_token, kwargs={"backend": self.BACKEND})
+        self.social_uid = "social_uid"
+        self.user = UserFactory()
+        UserSocialAuth.objects.create(user=self.user, provider=self.BACKEND, uid=self.social_uid)
+
+    def setup_user_response(self, success):
+        if success:
+            status = 200
+            body = json.dumps({self.UID_FIELD: self.social_uid})
+        else:
+            status = 400
+            body = json.dumps({})
+        httpretty.register_uri(
+            httpretty.GET,
+            self.USER_URL,
+            body=body,
+            content_type="application/json"
+        )
+
+    def assert_error(self, response, error_code):
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            json.loads(response.content),
+            {"error_code": error_code}
+        )
+
+    def test_success(self):
+        self.setup_user_response(success=True)
+        response = self.client.post(self.url, {"access_token": "dummy"})
+        self.assertEqual(response.status_code, 204)
+
+    def test_invalid_token(self):
+        self.setup_user_response(success=False)
+        response = self.client.post(self.url, {"access_token": "dummy"})
+        self.assert_error(response, "invalid_access_token")
+
+    def test_missing_token(self):
+        response = self.client.post(self.url)
+        self.assert_error(response, "missing_access_token")
+
+    def test_unlinked_user(self):
+        UserSocialAuth.objects.all().delete()
+        self.setup_user_response(success=True)
+        response = self.client.post(self.url, {"access_token": "dummy"})
+        self.assert_error(response, "invalid_access_token")
+
+    def test_GET(self):
+        response = self.client.get(self.url, {"access_token": "dummy"})
+        self.assertEqual(response.status_code, 405)
+
+
+class LoginOAuthTokenTestFacebook(LoginOAuthTokenMixin, TestCase):
+    BACKEND = "facebook"
+    USER_URL = "https://graph.facebook.com/me"
+    UID_FIELD = "id"
+
+
+class LoginOAuthTokenTestGoogle(LoginOAuthTokenMixin, TestCase):
+    BACKEND = "google-oauth2"
+    USER_URL = "https://www.googleapis.com/oauth2/v1/userinfo"
+    UID_FIELD = "email"

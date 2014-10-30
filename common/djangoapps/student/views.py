@@ -39,6 +39,11 @@ from django.template.response import TemplateResponse
 
 from ratelimitbackend.exceptions import RateLimitException
 
+from requests import HTTPError
+
+from social.apps.django_app import utils as social_utils
+from social.backends import oauth as social_oauth
+
 from edxmako.shortcuts import render_to_response, render_to_string
 from mako.exceptions import TopLevelLookupException
 
@@ -1108,6 +1113,28 @@ def login_user(request, error=""):  # pylint: disable-msg=too-many-statements,un
         "value": not_activated_msg,
     })  # TODO: this should be status code 400  # pylint: disable=fixme
 
+
+@require_POST
+@social_utils.strategy("social:complete")
+def login_oauth_token(request, backend):
+    backend = request.social_strategy.backend
+    if isinstance(backend, social_oauth.BaseOAuth1) or isinstance(backend, social_oauth.BaseOAuth2):
+        if "access_token" in request.POST:
+            # Tell third party auth pipeline that this is an API call
+            request.session[pipeline.AUTH_ENTRY_KEY] = pipeline.AUTH_ENTRY_API
+            user = None
+            try:
+                user = backend.do_auth(request.POST["access_token"])
+            except HTTPError:
+                pass
+            # Auth pipeline can return a response instead of a user if it fails
+            if user and isinstance(user, User):
+                return JsonResponse(status=204)
+            else:
+                return JsonResponse({"error_code": "invalid_access_token"}, status=400)
+        else:
+            return JsonResponse({"error_code": "missing_access_token"}, status=400)
+    raise Http404
 
 
 @ensure_csrf_cookie
