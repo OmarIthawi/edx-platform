@@ -1,4 +1,5 @@
 <%! from django.utils.translation import ugettext as _ %>
+<%namespace name='static' file='/static_content.html'/>
 
 <style type="text/css">
     .openseadragon1{
@@ -7,6 +8,16 @@
         cursor: all-scroll;
     }
 </style>
+
+<script>
+    window.baseUrl = "${settings.STATIC_URL}";
+    (function (require) {
+        require.config({
+            baseUrl: baseUrl
+        });
+    }).call(this, require || RequireJS.require);
+</script>
+<script type="text/javascript" src="${static.url("require-config.js")}"></script>
 
 <div class="annotatable-wrapper">
     <div class="annotatable-header">
@@ -222,16 +233,9 @@
             osda.annotator.destroy();
     }
 
-    // if the following is true, template is being rendered in LMS, otherwise it is in Studio
-    if (typeof Annotator !== 'undefined') {
-        startosda();
-    } else {
-        try {
-            require(["osda"], function(osda){
-                startosda();
-            });
-        } catch(error) {
-            console.log("Error: " + error.message + " - Annotator not loaded in LMS.");
-        }
-    }
+    (function (require) {
+        require(["osda"], function(osda){
+            startosda();
+        });
+    }).call(this, require || RequireJS.require);
 </script>

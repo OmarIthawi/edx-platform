@@ -3,6 +3,15 @@
 ${static.css(group='style-vendor-tinymce-content', raw=True)}
 ${static.css(group='style-vendor-tinymce-skin', raw=True)}
 ${static.css(group='style-xmodule-annotations', raw=True)}
+<script>
+    window.baseUrl = "${settings.STATIC_URL}";
+    (function (require) {
+        require.config({
+            baseUrl: baseUrl
+        });
+    }).call(this, require || RequireJS.require);
+</script>
+<script type="text/javascript" src="${static.url("require-config.js")}"></script>
 
 <div class="annotatable-wrapper">
 	<div class="annotatable-header">
@@ -198,15 +207,10 @@ ${static.css(group='style-xmodule-annotations', raw=True)}
             };
         Catch = new CatchAnnotation($('#catchDIV'),catchOptions);
     }
-    if (typeof Annotator !== 'undefined') {
-        startova();
-    } else {
-        try {
-            require(["ova"], function(ova) {
-                startova();
-            });
-        } catch(error) {
-            console.log("Error: " + error.message + " - Annotator not loaded in LMS.");
-        }
-    }
+
+    (function (require) {
+        require(["ova"], function(ova) {
+            startova();
+        });
+    }).call(this, require || RequireJS.require);
 </script>
