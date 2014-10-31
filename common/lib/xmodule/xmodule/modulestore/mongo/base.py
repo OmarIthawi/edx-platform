@@ -25,6 +25,7 @@ from path import path
 from datetime import datetime
 from pytz import UTC
 from contracts import contract, new_contract
+from operator import itemgetter
 
 from importlib import import_module
 from xmodule.errortracker import null_error_tracker, exc_info_to_str
@@ -45,7 +46,7 @@ from opaque_keys.edx.locator import CourseLocator
 from opaque_keys.edx.keys import UsageKey, CourseKey, AssetKey
 from xmodule.exceptions import HeartbeatFailure
 from xmodule.modulestore.edit_info import EditInfoRuntimeMixin
-from xmodule.assetstore import AssetMetadata, AssetThumbnailMetadata
+from xmodule.assetstore import AssetMetadata, AssetThumbnailMetadata, SortedCollection
 
 log = logging.getLogger(__name__)
 
@@ -1493,7 +1494,7 @@ class MongoModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase, Mongo
 
         course_assets, asset_idx = self._find_course_asset(course_key, asset_metadata.asset_id.path, thumbnail)
         info = 'thumbnails' if thumbnail else 'assets'
-        all_assets = course_assets[info]
+        all_assets = SortedCollection(course_assets[info], key=itemgetter('filename'))
 
         # Set the edited information for assets only - not thumbnails.
         if not thumbnail:
@@ -1503,14 +1504,13 @@ class MongoModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase, Mongo
         metadata_to_insert = asset_metadata.to_mongo()
         if asset_idx is None:
             # Append new metadata.
-            # Future optimization: Insert in order & binary search to retrieve.
-            all_assets.append(metadata_to_insert)
+            all_assets.insert(metadata_to_insert)
         else:
             # Replace existing metadata.
-            all_assets[asset_idx] = metadata_to_insert
+            all_assets.replace(asset_idx, metadata_to_insert)
 
         # Update the document.
-        self.asset_collection.update({'_id': course_assets['_id']}, {'$set': {info: all_assets}})
+        self.asset_collection.update({'_id': course_assets['_id']}, {'$set': {info: [i for i in all_assets]}})
         return True
 
     @contract(asset_key='AssetKey', attr_dict=dict)
