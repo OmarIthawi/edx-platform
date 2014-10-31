@@ -22,13 +22,16 @@ class StudioValidation(Validation):
         message = super(StudioValidation, cls).create_message(message_type, message_text)
         assert isinstance(message_text, unicode), "Message text must be unicode."
         if action_label:
-            assert isinstance(action_label, unicode), "Action label must be unicode."
+            if not isinstance(action_label, unicode):
+                raise TypeError("Action label must be unicode.")
             message["action_label"] = action_label
         if action_class:
-            assert isinstance(action_class, basestring), "Action class must be a string."
+            if not isinstance(action_class, basestring):
+                raise TypeError("Action class must be a string.")
             message["action_class"] = action_class
         if action_runtime_event:
-            assert isinstance(action_runtime_event, basestring), "Action runtime event must be a string."
+            if not isinstance(action_runtime_event, basestring):
+                raise TypeError("Action runtime event must be a string.")
             message["action_runtime_event"] = action_runtime_event
         return message
 

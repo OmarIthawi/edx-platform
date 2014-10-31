@@ -360,11 +360,9 @@ class SplitTestModule(SplitTestFields, XModule, StudioEditableModule):
 
         if validation and (not self.is_configured and len(split_test_validation.messages) == 1):
             validation.summary = split_test_validation.messages[0]
-            #validation_messages.set_additional_root_classes("no-container-content")
         else:
             validation.summary = self.descriptor.general_validation_message(split_test_validation)
-            validation + split_test_validation
-            #validation.set_detailed_message_visibility(True)
+            validation = validation + split_test_validation
 
         return validation
 
@@ -592,8 +590,8 @@ class SplitTestDescriptor(SplitTestFields, SequenceDescriptor, StudioEditableDes
         if validation is None:
             validation = self._detailed_validation_messages()
 
-        if validation:
-            has_error = any(message.type == StudioValidation.MESSAGE_TYPES.ERROR for message in validation.messages)
+        if not validation:
+            has_error = any(message["type"] == StudioValidation.MESSAGE_TYPES.ERROR for message in validation.messages)
             return StudioValidation.create_message(
                 StudioValidation.MESSAGE_TYPES.ERROR if has_error else StudioValidation.MESSAGE_TYPES.WARNING,
                 (u"This content experiment has issues that affect content visibility.")
