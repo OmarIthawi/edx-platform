@@ -13,7 +13,6 @@ from student.models import CourseEnrollment
 from student import auth
 
 
-
 @ddt.ddt
 class TestUserApi(ModuleStoreTestCase, APITestCase):
     """
@@ -64,9 +63,9 @@ class TestUserApi(ModuleStoreTestCase, APITestCase):
         self.assertEqual(len(courses), 1)
 
         found_course = courses[0]['course']
-        self.assertTrue('video_outline' in found_course )
-        self.assertTrue('course_handouts' in found_course )
-        self.assertEqual(found_course ['id'], course.id.to_deprecated_string())
+        self.assertTrue('video_outline' in found_course)
+        self.assertTrue('course_handouts' in found_course)
+        self.assertEqual(found_course['id'], course.id.to_deprecated_string())
         self.assertEqual(courses[0]['mode'], 'honor')
 
     def test_non_mobile_enrollments(self):
