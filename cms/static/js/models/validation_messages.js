@@ -6,11 +6,8 @@ define(["backbone", "gettext"], function (Backbone, gettext) {
         defaults: {
             summary: {},
             detailed_messages: [],
-            show_detailed_only_when_root: false,
-            is_root: false,
-            additional_root_classes: "",
-            additional_inline_classes: "",
-            is_empty: true
+            show_summary_only: false,
+            is_root: false
         },
 
         getSummaryMessage: function () {
@@ -29,7 +26,8 @@ define(["backbone", "gettext"], function (Backbone, gettext) {
         },
 
         getSummaryType: function () {
-            var detailedMessages = this.get("detailed_messages");
+            var detailedMessages = this.get("messages");
+            // Possible types are "error", "warning", and "not-configured". "not-configured" is treated as a warning.
             for (var i = 0; i < detailedMessages.length; i++) {
                 if (detailedMessages[i].type === "error") {
                     return "error";
@@ -55,15 +53,18 @@ define(["backbone", "gettext"], function (Backbone, gettext) {
         },
 
         getDetailedMessages: function () {
-            if (this.get("show_detailed_only_when_root") && !this.get("is_root")) {
+            if (this.get("show_summary_only")) {
                 return [];
             }
-            return this.get("detailed_messages");
+            return this.get("messages");
         },
 
         getAdditionalClasses: function () {
-            var classes = this.get("is_root") ? this.get("additional_root_classes") : this.get("additional_inline_classes");
-            return classes;
+            if (this.get("is_root") && this.getSummaryMessage().type === "not-configured" &&
+                this.getDetailedMessages().length === 0) {
+                return "no-container-content";
+            }
+            return "";
         }
 
     });

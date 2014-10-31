@@ -12,7 +12,7 @@ from xmodule.editing_module import EditingDescriptor
 from xmodule.html_checker import check_html
 from xmodule.stringify import stringify_children
 from xmodule.x_module import XModule
-from xmodule.validation_messages import ValidationMessage
+from xblock.validation import Validation
 from xmodule.xml_module import XmlDescriptor, name_to_pathname
 import textwrap
 from xmodule.contentstore.content import StaticContent
@@ -72,16 +72,16 @@ class HtmlModule(HtmlFields, XModule):
             return self.data.replace("%%USER_ID%%", self.system.anonymous_student_id)
         return self.data
 
-    def validation_messages(self):
+    def validate(self):
         """
         Message for either error or warning validation message/s.
 
         Returns message and type. Priority given to error type message.
         """
-        validation_messages = super(HtmlModule, self).validation_messages()
-        validation_messages.add_detailed_message(ValidationMessage(u"The author-supplied HTML does not validate.", ValidationMessage.error_type))
+        validation = super(HtmlModule, self).validate()
+        validation.add(Validation.MESSAGE_TYPES.ERROR, u"The author-supplied HTML does not validate.")
 
-        return validation_messages
+        return validation
 
 
 class HtmlDescriptor(HtmlFields, XmlDescriptor, EditingDescriptor):

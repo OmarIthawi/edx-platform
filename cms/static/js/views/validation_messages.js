@@ -13,7 +13,7 @@ define(["jquery", "underscore", "js/views/baseview"],
                     if (validationType === 'error') {
                         return 'icon-exclamation-sign';
                     }
-                    else if (validationType === 'warning') {
+                    else if (validationType === 'warning' || validationType === 'not-configured') {
                         return 'icon-warning-sign';
                     }
                     return null;

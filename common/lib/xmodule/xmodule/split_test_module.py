@@ -12,7 +12,7 @@ from xmodule.progress import Progress
 from xmodule.seq_module import SequenceDescriptor
 from xmodule.studio_editable import StudioEditableModule, StudioEditableDescriptor
 from xmodule.x_module import XModule, module_attr, STUDENT_VIEW
-from xmodule.validation_messages import ValidationMessage
+from xmodule.validation import StudioValidation
 from xmodule.modulestore.inheritance import UserPartitionList
 
 from lxml import etree
@@ -346,27 +346,27 @@ class SplitTestModule(SplitTestFields, XModule, StudioEditableModule):
                     return (group.name, group.id)
         return (None, None)
 
-    def validation_messages(self):
+    def validate(self):
         """
         Message for either error or warning validation message/s.
 
         Returns message and type. Priority given to error type message.
         """
-        validation_messages = super(SplitTestModule, self).validation_messages()
-        detailed_validation_messages = self.descriptor._detailed_validation_messages()
+        validation = super(SplitTestModule, self).validate()
+        split_test_validation = self.descriptor._detailed_validation_messages()
 
-        if not detailed_validation_messages:
-            return validation_messages
+        if split_test_validation:
+            return validation
 
-        if validation_messages.is_empty and (not self.is_configured and len(detailed_validation_messages) == 1):
-            validation_messages.set_summary(detailed_validation_messages[0])
-            validation_messages.set_additional_root_classes("no-container-content")
+        if validation and (not self.is_configured and len(split_test_validation.messages) == 1):
+            validation.summary = split_test_validation.messages[0]
+            #validation_messages.set_additional_root_classes("no-container-content")
         else:
-            validation_messages.set_summary(self.descriptor.general_validation_message(detailed_validation_messages))
-            validation_messages.add_detailed_messages(detailed_validation_messages)
-            validation_messages.set_detailed_message_visibility(True)
+            validation.summary = self.descriptor.general_validation_message(split_test_validation)
+            validation + split_test_validation
+            #validation.set_detailed_message_visibility(True)
 
-        return validation_messages
+        return validation
 
 
 @XBlock.needs('user_tags')  # pylint: disable=abstract-method
@@ -530,39 +530,38 @@ class SplitTestDescriptor(SplitTestFields, SequenceDescriptor, StudioEditableDes
 
     def _detailed_validation_messages(self):
         """
-        Returns a list of ValidationMessage objects describing the current state of the split_test_module.
+        Returns a StudioValidation object describing the current state of the split_test_module.
         """
         _ = self.runtime.service(self, "i18n").ugettext  # pylint: disable=redefined-outer-name
-        messages = []
+        split_validation = StudioValidation(self.location)
         if self.user_partition_id < 0:
-            messages.append(ValidationMessage(
+            split_validation.add(
+                StudioValidation.MESSAGE_TYPES.NOT_CONFIGURED,
                 _(u"The experiment is not associated with a group configuration."),
-                ValidationMessage.warning_type,
                 action_class='edit-button',
                 action_label=_(u"Select a Group Configuration")
-            ))
+            )
         else:
             user_partition = self.get_selected_partition()
             if not user_partition:
-                messages.append(ValidationMessage(
-                    _(u"The experiment uses a deleted group configuration. Select a valid group configuration or delete this experiment."),
-                    ValidationMessage.error_type
-                ))
+                split_validation.add(
+                    StudioValidation.MESSAGE_TYPES.ERROR,
+                    _(u"The experiment uses a deleted group configuration. Select a valid group configuration or delete this experiment.")
+                )
             else:
                 [active_children, inactive_children] = self.active_and_inactive_children()
                 if len(active_children) < len(user_partition.groups):
-                    messages.append(ValidationMessage(
+                    split_validation.add(
+                        StudioValidation.MESSAGE_TYPES.ERROR,
                         _(u"The experiment does not contain all of the groups in the configuration."),
-                        ValidationMessage.error_type,
                         action_runtime_event='add-missing-groups',
                         action_label=_(u"Add Missing Groups")
-                    ))
+                    )
                 if len(inactive_children) > 0:
-                    messages.append(ValidationMessage(
-                        _(u"The experiment has an inactive group. Move content into active groups, then delete the inactive group."),
-                        ValidationMessage.warning_type
-                    ))
-        return messages
+                    split_validation.add(
+                        StudioValidation.MESSAGE_TYPES.WARNING,
+                        _(u"The experiment has an inactive group. Move content into active groups, then delete the inactive group."))
+        return split_validation
 
     @XBlock.handler
     def add_missing_groups(self, request, suffix=''):  # pylint: disable=unused-argument
@@ -586,18 +585,18 @@ class SplitTestDescriptor(SplitTestFields, SequenceDescriptor, StudioEditableDes
             self.system.modulestore.update_item(self, None)
         return Response()
 
-    def general_validation_message(self, validation_messages=None):
+    def general_validation_message(self, validation=None):
         """
         TODO update doc
         """
-        if validation_messages is None:
-            validation_messages = self._detailed_validation_messages()
+        if validation is None:
+            validation = self._detailed_validation_messages()
 
-        if validation_messages:
-            has_error = any(message.type == ValidationMessage.error_type for message in validation_messages)
-            return ValidationMessage(
-                _(u"This content experiment has issues that affect content visibility."),
-                ValidationMessage.error_type if has_error else ValidationMessage.warning_type,
+        if validation:
+            has_error = any(message.type == StudioValidation.MESSAGE_TYPES.ERROR for message in validation.messages)
+            return StudioValidation.create_message(
+                StudioValidation.MESSAGE_TYPES.ERROR if has_error else StudioValidation.MESSAGE_TYPES.WARNING,
+                (u"This content experiment has issues that affect content visibility.")
             )
         return None
 

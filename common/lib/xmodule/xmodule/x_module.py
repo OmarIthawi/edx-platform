@@ -23,7 +23,7 @@ from xmodule.fields import RelativeTime
 
 from xmodule.errortracker import exc_info_to_str
 from xmodule.modulestore.exceptions import ItemNotFoundError
-from xmodule.validation_messages import ValidationMessages
+from xmodule.validation import StudioValidation
 from opaque_keys.edx.keys import UsageKey
 from xmodule.exceptions import UndefinedContext
 import dogstats_wrapper as dog_stats_api
@@ -444,11 +444,10 @@ class XModuleMixin(XBlockMixin):
         self.xmodule_runtime = xmodule_runtime
         self._field_data = field_data
 
-    def validation_messages(self):
-        return ValidationMessages()
-        # inherited_validation_messages = ValidationMessages()
-        # inherited_validation_messages.add_detailed_message(u"All xblocks are evil!", ValidationMessages.warning_type)
-        # return inherited_validation_messages
+    def validate(self):
+        # Convert from base xblock Validation class to StudioValidation.
+        validation = super(XModuleMixin, self).validate()
+        return StudioValidation.copy(validation)
 
 
 class ProxyAttribute(object):
