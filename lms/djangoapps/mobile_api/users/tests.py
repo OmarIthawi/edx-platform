@@ -30,7 +30,10 @@ class TestUserApi(ModuleStoreTestCase, APITestCase):
         super(TestUserApi, self).tearDown()
         self.client.logout()
 
-    def _enrollmentURL(self):
+    def _enrollment_url(self):
+        """
+        api url that gets the current user's course enrollments
+        """
         return reverse('courseenrollment-detail', kwargs={'username': self.user.username})
 
     def _enroll(self, course):
@@ -49,7 +52,7 @@ class TestUserApi(ModuleStoreTestCase, APITestCase):
         check that enrolling in course adds us to it
         """
 
-        url = self._enrollmentURL()
+        url = self._enrollment_url()
         self.client.login(username=self.username, password=self.password)
         response = self.client.get(url)
         self._enroll(course)
@@ -67,14 +70,14 @@ class TestUserApi(ModuleStoreTestCase, APITestCase):
         self.assertEqual(courses[0]['mode'], 'honor')
 
     def test_non_mobile_enrollments(self):
-        url = self._enrollmentURL()
+        url = self._enrollment_url()
         non_mobile_course = CourseFactory.create(mobile_available=False)
         self.client.login(username=self.username, password=self.password)
 
         self._enroll(non_mobile_course)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, [])
+        self.assertEqual(response.data, [])    # pylint: disable=maybe-no-member
 
     @ddt.data(auth.CourseBetaTesterRole, auth.CourseStaffRole, auth.CourseInstructorRole)
     def test_privileged_enrollments(self, role):
