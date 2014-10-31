@@ -447,7 +447,7 @@ class LoginOAuthTokenMixin(object):
         self.user = UserFactory()
         UserSocialAuth.objects.create(user=self.user, provider=self.BACKEND, uid=self.social_uid)
 
-    def setup_user_response(self, success):
+    def _setup_user_response(self, success):
         if success:
             status = 200
             body = json.dumps({self.UID_FIELD: self.social_uid})
@@ -461,7 +461,7 @@ class LoginOAuthTokenMixin(object):
             content_type="application/json"
         )
 
-    def assert_error(self, response, error_code):
+    def _assert_error(self, response, error_code):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             json.loads(response.content),
@@ -469,24 +469,24 @@ class LoginOAuthTokenMixin(object):
         )
 
     def test_success(self):
-        self.setup_user_response(success=True)
+        self._setup_user_response(success=True)
         response = self.client.post(self.url, {"access_token": "dummy"})
         self.assertEqual(response.status_code, 204)
 
     def test_invalid_token(self):
-        self.setup_user_response(success=False)
+        self._setup_user_response(success=False)
         response = self.client.post(self.url, {"access_token": "dummy"})
-        self.assert_error(response, "invalid_access_token")
+        self._assert_error(response, "invalid_access_token")
 
     def test_missing_token(self):
         response = self.client.post(self.url)
-        self.assert_error(response, "missing_access_token")
+        self._assert_error(response, "missing_access_token")
 
     def test_unlinked_user(self):
         UserSocialAuth.objects.all().delete()
-        self.setup_user_response(success=True)
+        self._setup_user_response(success=True)
         response = self.client.post(self.url, {"access_token": "dummy"})
-        self.assert_error(response, "invalid_access_token")
+        self._assert_error(response, "invalid_access_token")
 
     def test_GET(self):
         response = self.client.get(self.url, {"access_token": "dummy"})
