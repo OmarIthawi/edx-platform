@@ -4,6 +4,8 @@
         // imageannotation.html, notes.html, textannotation.html, videoannotation.html
         waitSeconds: 60,
         paths: {
+          "URI": "js/vendor/URI.min",
+          "tinymce": "js/vendor/tinymce/js/tinymce/tinymce.full.min",
           // Files needed for OVA
           "annotator": "js/vendor/ova/annotator-full",
           "annotator-harvardx": "js/vendor/ova/annotator-full-firebase-auth",
@@ -26,6 +28,12 @@
           // end of OVA files
         },
         shim: {
+          "URI": {
+            exports: "URI"
+          },
+          "tinymce": {
+            exports: "tinymce"
+          },
           // The following are all needed for OVA
           "video.dev": {
             exports:"videojs"
