@@ -53,6 +53,8 @@
 
 <script>
 
+    (function (require) {
+    require(["osda"], function(osda){
     function onClickHideInstructions(){
         //Reset function if there is more than one event handler
         $(this).off();
@@ -233,9 +235,7 @@
             osda.annotator.destroy();
     }
 
-    (function (require) {
-        require(["osda"], function(osda){
-            startosda();
-        });
+    startosda();
+    });
     }).call(this, require || RequireJS.require);
 </script>

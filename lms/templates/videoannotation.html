@@ -46,7 +46,9 @@ ${static.css(group='style-xmodule-annotations', raw=True)}
 
 <script>
 
-	function onClickHideInstructions(){
+    (function (require) {
+    require(["ova"], function(ova) {
+    function onClickHideInstructions(){
 		//Reset function if there is more than one event handler
 		$(this).off();
 		$(this).on('click',onClickHideInstructions);
@@ -208,9 +210,7 @@ ${static.css(group='style-xmodule-annotations', raw=True)}
         Catch = new CatchAnnotation($('#catchDIV'),catchOptions);
     }
 
-    (function (require) {
-        require(["ova"], function(ova) {
-            startova();
-        });
+    startova();
+    });
     }).call(this, require || RequireJS.require);
 </script>
