@@ -1032,7 +1032,7 @@ class ModuleStoreWriteBase(ModuleStoreReadBase, ModuleStoreWrite):
         sort_field = 'filename'
         sort_order = 'ascending'
         if sort:
-            if sort[0] == 'uploadDate':
+            if sort[0] == 'uploadDate' and not get_thumbnails:
                 sort_field = 'edited_on'
             if sort[1] == 'descending':
                 sort_order = 'descending'

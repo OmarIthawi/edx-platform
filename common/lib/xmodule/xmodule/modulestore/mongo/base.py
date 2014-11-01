@@ -1513,6 +1513,28 @@ class MongoModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase, Mongo
         self.asset_collection.update({'_id': course_assets['_id']}, {'$set': {info: [i for i in all_assets]}})
         return True
 
+    @contract(source_course_key='CourseKey', dest_course_key='CourseKey')
+    def copy_all_asset_metadata(self, source_course_key, dest_course_key, user_id):
+        """
+        Copy all the course assets from source_course_key to dest_course_key.
+
+        Arguments:
+            source_course_key (CourseKey): identifier of course to copy from
+            dest_course_key (CourseKey): identifier of course to copy to
+        """
+        source_assets = self._find_course_assets(source_course_key)
+        dest_assets = self._find_course_assets(dest_course_key)
+        dest_assets['assets'] = source_assets.get('assets', [])
+        dest_assets['thumbnails'] = source_assets.get('thumbnails', [])
+
+        # Update the document.
+        self.asset_collection.update(
+            {'_id': dest_assets['_id']},
+            {'$set': {'assets': [i for i in dest_assets['assets']],
+                      'thumbnails': [i for i in dest_assets['thumbnails']]}
+             }
+        )
+
     @contract(asset_key='AssetKey', attr_dict=dict)
     def set_asset_metadata_attrs(self, asset_key, attr_dict, user_id):
         """
