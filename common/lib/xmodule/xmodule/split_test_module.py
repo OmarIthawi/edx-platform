@@ -362,7 +362,7 @@ class SplitTestModule(SplitTestFields, XModule, StudioEditableModule):
             validation.summary = split_test_validation.messages[0]
         else:
             validation.summary = self.descriptor.general_validation_message(split_test_validation)
-            validation = validation + split_test_validation
+            validation.add_messages(split_test_validation)
 
         return validation
 

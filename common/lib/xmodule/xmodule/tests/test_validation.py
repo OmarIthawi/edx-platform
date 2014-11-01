@@ -118,36 +118,34 @@ class StudioValidationTest(unittest.TestCase):
         self.assertFalse(validation.is_empty)
         self.assertFalse(validation)
 
-    def test_add_operator(self):
+    def test_add_messages(self):
         """
-        Test the behavior of the addition operator (+) with `Validation` and `StudioValidation` instances.
+        Test the behavior of calling `add_messages` with `StudioValidation` instances.
         """
-        validation_1 = Validation("id")
+        validation_1 = StudioValidation("id")
+        validation_1.set_summary(StudioValidation.MESSAGE_TYPES.WARNING, u"Summary message")
         validation_1.add(Validation.MESSAGE_TYPES.ERROR, u"Error message")
 
         validation_2 = StudioValidation("id")
+        validation_2.set_summary(StudioValidation.MESSAGE_TYPES.ERROR, u"Summary 2 message")
         validation_2.add(StudioValidation.MESSAGE_TYPES.NOT_CONFIGURED, u"Not configured")
-        validation_2.set_summary(StudioValidation.MESSAGE_TYPES.WARNING, u"Summary message")
 
-        validation = validation_1 + validation_2
+        validation_1.add_messages(validation_2)
 
-        # TODO: need to figure this out
-        # self.assertIsInstance(validation, StudioValidation)
-        self.assertEqual(2, len(validation.messages))
+        self.assertEqual(2, len(validation_1.messages))
         self.assertEqual(
-            StudioValidation.create_message(Validation.MESSAGE_TYPES.ERROR, u"Error message"), validation.messages[0]
+            StudioValidation.create_message(Validation.MESSAGE_TYPES.ERROR, u"Error message"), validation_1.messages[0]
         )
         self.assertEqual(
             StudioValidation.create_message(
                 StudioValidation.MESSAGE_TYPES.NOT_CONFIGURED, u"Not configured"
-            ), validation.messages[1]
+            ), validation_1.messages[1]
         )
-        # TODO: need to figure this out
-        # self.assertEqual(
-        #     StudioValidation.create_message(
-        #         StudioValidation.MESSAGE_TYPES.WARNING, u"Summary message"
-        #     ), validation.summary
-        # )
+        self.assertEqual(
+            StudioValidation.create_message(
+                StudioValidation.MESSAGE_TYPES.WARNING, u"Summary message"
+            ), validation_1.summary
+        )
 
     def test_to_json(self):
         """
