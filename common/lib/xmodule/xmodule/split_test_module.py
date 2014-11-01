@@ -352,8 +352,7 @@ class SplitTestModule(SplitTestFields, XModule, StudioEditableModule):
 
         Returns message and type. Priority given to error type message.
         """
-        validation = super(SplitTestModule, self).validate()
-        return self.descriptor.validate(validation)
+        return self.descriptor.validate()
 
 @XBlock.needs('user_tags')  # pylint: disable=abstract-method
 @XBlock.wants('partitions')
@@ -519,22 +518,20 @@ class SplitTestDescriptor(SplitTestFields, SequenceDescriptor, StudioEditableDes
     def is_configured(self):
         return not self.user_partition_id == SplitTestFields.no_partition_selected['value']
 
-    def validate(self, base_validation=None):
-        if base_validation is None:
-            base_validation = StudioValidation(self.location)
-
+    def validate(self):
+        validation = super(SplitTestDescriptor, self).validate()
         split_test_validation = self.validate_split_test()
 
         if split_test_validation:
-            return base_validation
+            return validation
 
-        if base_validation and (not self.is_configured and len(split_test_validation.messages) == 1):
-            base_validation.summary = split_test_validation.messages[0]
+        if validation and (not self.is_configured and len(split_test_validation.messages) == 1):
+            validation.summary = split_test_validation.messages[0]
         else:
-            base_validation.summary = self.general_validation_message(split_test_validation)
-            base_validation.add_messages(split_test_validation)
+            validation.summary = self.general_validation_message(split_test_validation)
+            validation.add_messages(split_test_validation)
 
-        return base_validation
+        return validation
 
     def validate_split_test(self):
         """
