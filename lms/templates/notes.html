@@ -69,6 +69,8 @@ ${static.css(group='style-xmodule-annotations', raw=True)}
         </section>
         <script>
 
+        (function (require) {
+        require(["ova"], function(osda){
         //Grab uri of the course
         var parts = window.location.href.split("/"),
             uri = '';
@@ -211,6 +213,8 @@ ${static.css(group='style-xmodule-annotations', raw=True)}
                 default_tab: "${default_tab}",
             },
             Catch = new CatchAnnotation($('#catchDIV'),catchOptions);
+        });
+        }).call(this, require || RequireJS.require);
         </script>
     </div>
 </section>
