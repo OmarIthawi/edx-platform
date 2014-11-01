@@ -4,16 +4,6 @@ ${static.css(group='style-vendor-tinymce-content', raw=True)}
 ${static.css(group='style-vendor-tinymce-skin', raw=True)}
 ${static.css(group='style-xmodule-annotations', raw=True)}
 
-<script>
-    window.baseUrl = "${settings.STATIC_URL}";
-    (function (require) {
-        require.config({
-            baseUrl: baseUrl
-        });
-    }).call(this, require || RequireJS.require);
-</script>
-<script type="text/javascript" src="${static.url("require-config.js")}"></script>
-
 <div class="annotatable-wrapper">
     <div class="annotatable-header">
         % if display_name is not UNDEFINED and display_name is not None:
