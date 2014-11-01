@@ -1,4 +1,7 @@
-<%! from django.utils.translation import ugettext as _ %>
+<%!
+from django.utils.translation import ugettext as _
+from util.markup import format_html
+%>
 <%inherit file="base.html" />
 <%block name="title">${_("Page Not Found")}</%block>
 <%block name="bodyclass">view-util util-404</%block>
@@ -12,11 +15,12 @@
     </header>
     <article class="content-primary" role="main">
       <p>${_('The page that you were looking for was not found.')}
-       ${_('Go back to the {homepage} or let us know about any pages that may have been moved at {email}.').format(
-            homepage='<a href="/">homepage</a>',
+        ${format_html(_('Go back to the {link_start}home page{link_end} or let us know about any pages that may have been moved at {email}.'),
+            link_start='<a href="/">',
+            link_end='</a>',
             email=u'<a href="mailto:{address}">{address}</a>'.format(
                 address=settings.TECH_SUPPORT_EMAIL,
-            ))}
+            )) | n}
       </p>
     </article>
   </section>
