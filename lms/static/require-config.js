@@ -6,6 +6,7 @@
         paths: {
           "URI": "js/vendor/URI.min",
           "tinymce": "js/vendor/tinymce/js/tinymce/tinymce.full.min",
+          "jquery.tinymce": "js/vendor/tinymce/js/tinymce/jquery.tinymce.min",
           // Files needed for OVA
           "annotator": "js/vendor/ova/annotator-full",
           "annotator-harvardx": "js/vendor/ova/annotator-full-firebase-auth",
