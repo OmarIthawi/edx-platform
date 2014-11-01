@@ -9,7 +9,7 @@ from contentstore.views.course import GroupConfiguration
 from contentstore.tests.utils import CourseTestCase
 from xmodule.partitions.partitions import Group, UserPartition
 from xmodule.modulestore.tests.factories import ItemFactory
-from xmodule.validation_messages import ValidationMessage
+from xmodule.validation import StudioValidation
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore import ModuleStoreEnum
 
@@ -541,7 +541,7 @@ class GroupConfigurationsValidationTestCase(CourseTestCase, HelperMethods):
     def setUp(self):
         super(GroupConfigurationsValidationTestCase, self).setUp()
 
-    @patch('xmodule.split_test_module.SplitTestDescriptor.detailed_validation_messages')
+    @patch('xmodule.split_test_module.SplitTestDescriptor.validate_split_test')
     def test_error_message_present(self, mocked_validation_messages):
         """
         Tests if validation message is present.
@@ -549,23 +549,18 @@ class GroupConfigurationsValidationTestCase(CourseTestCase, HelperMethods):
         self._add_user_partitions()
         split_test = self._create_content_experiment(cid=0, name_suffix='0')[1]
 
-        mocked_validation_messages.return_value = [
-            ValidationMessage(
-                split_test,
-                u"Validation message",
-                ValidationMessageType.error
-            )
-        ]
-        group_configuration = GroupConfiguration.add_usage_info(self.course, self.store)[0]
-        self.assertEqual(
-            group_configuration['usage'][0]['validation'],
-            {
-                'message': u'This content experiment has issues that affect content visibility.',
-                'type': 'error'
-            }
+        validation = StudioValidation(split_test.location)
+        validation.add(StudioValidation.MESSAGE_TYPES.ERROR, u"Validation message")
+        mocked_validation_messages.return_value = validation
+
+        expected_result = StudioValidation.create_message(
+            StudioValidation.MESSAGE_TYPES.ERROR, u"This content experiment has issues that affect content visibility."
         )
 
-    @patch('xmodule.split_test_module.SplitTestDescriptor.detailed_validation_messages')
+        group_configuration = GroupConfiguration.add_usage_info(self.course, self.store)[0]
+        self.assertEqual(expected_result, group_configuration['usage'][0]['validation'])
+
+    @patch('xmodule.split_test_module.SplitTestDescriptor.validate_split_test')
     def test_warning_message_present(self, mocked_validation_messages):
         """
         Tests if validation message is present.
@@ -573,23 +568,19 @@ class GroupConfigurationsValidationTestCase(CourseTestCase, HelperMethods):
         self._add_user_partitions()
         split_test = self._create_content_experiment(cid=0, name_suffix='0')[1]
 
-        mocked_validation_messages.return_value = [
-            ValidationMessage(
-                split_test,
-                u"Validation message",
-                ValidationMessageType.warning
-            )
-        ]
-        group_configuration = GroupConfiguration.add_usage_info(self.course, self.store)[0]
-        self.assertEqual(
-            group_configuration['usage'][0]['validation'],
-            {
-                'message': u'This content experiment has issues that affect content visibility.',
-                'type': 'warning'
-            }
+        validation = StudioValidation(split_test.location)
+        validation.add(StudioValidation.MESSAGE_TYPES.WARNING, u"Validation message")
+        mocked_validation_messages.return_value = validation
+
+        expected_result = StudioValidation.create_message(
+            StudioValidation.MESSAGE_TYPES.WARNING,
+            u"This content experiment has issues that affect content visibility."
         )
 
-    @patch('xmodule.split_test_module.SplitTestDescriptor.detailed_validation_messages')
+        group_configuration = GroupConfiguration.add_usage_info(self.course, self.store)[0]
+        self.assertEqual(expected_result, group_configuration['usage'][0]['validation'])
+
+    @patch('xmodule.split_test_module.SplitTestDescriptor.validate_split_test')
     def test_update_usage_info(self, mocked_validation_messages):
         """
         Tests if validation message is present when updating usage info.
@@ -597,31 +588,29 @@ class GroupConfigurationsValidationTestCase(CourseTestCase, HelperMethods):
         self._add_user_partitions()
         split_test = self._create_content_experiment(cid=0, name_suffix='0')[1]
 
-        mocked_validation_messages.return_value = [
-            ValidationMessage(
-                split_test,
-                u"Validation message",
-                ValidationMessageType.warning
-            )
-        ]
+        validation = StudioValidation(split_test.location)
+        validation.add(StudioValidation.MESSAGE_TYPES.WARNING, u"Validation message")
+        mocked_validation_messages.return_value = validation
 
-        group_configuration = GroupConfiguration.update_usage_info(self.store, self.course, self.course.user_partitions[0])
-
-        self.assertEqual(
-            group_configuration['usage'][0]['validation'],
-            {
-                'message': u'This content experiment has issues that affect content visibility.',
-                'type': 'warning'
-            }
+        expected_result = StudioValidation.create_message(
+            StudioValidation.MESSAGE_TYPES.WARNING,
+            u"This content experiment has issues that affect content visibility."
         )
 
-    @patch('xmodule.split_test_module.SplitTestDescriptor.detailed_validation_messages')
+        group_configuration = GroupConfiguration.update_usage_info(
+            self.store, self.course, self.course.user_partitions[0]
+        )
+        self.assertEqual(expected_result, group_configuration['usage'][0]['validation'])
+
+    @patch('xmodule.split_test_module.SplitTestDescriptor.validate_split_test')
     def test_update_usage_info_no_message(self, mocked_validation_messages):
         """
         Tests if validation message is not present when updating usage info.
         """
         self._add_user_partitions()
-        self._create_content_experiment(cid=0, name_suffix='0')
-        mocked_validation_messages.return_value = []
-        group_configuration = GroupConfiguration.update_usage_info(self.store, self.course, self.course.user_partitions[0])
-        self.assertEqual(group_configuration['usage'][0]['validation'], None)
+        split_test = self._create_content_experiment(cid=0, name_suffix='0')[1]
+        mocked_validation_messages.return_value = StudioValidation(split_test.location)
+        group_configuration = GroupConfiguration.update_usage_info(
+            self.store, self.course, self.course.user_partitions[0]
+        )
+        self.assertEqual(None, group_configuration['usage'][0]['validation'])

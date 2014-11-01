@@ -192,7 +192,7 @@ class SplitTestModule(SplitTestFields, XModule, StudioEditableModule):
 
     @property
     def is_configured(self):
-        return not self.user_partition_id == SplitTestFields.no_partition_selected['value']
+        return self.descriptor.is_configured
 
     def _staff_view(self, context):
         """
@@ -353,19 +353,7 @@ class SplitTestModule(SplitTestFields, XModule, StudioEditableModule):
         Returns message and type. Priority given to error type message.
         """
         validation = super(SplitTestModule, self).validate()
-        split_test_validation = self.descriptor._detailed_validation_messages()
-
-        if split_test_validation:
-            return validation
-
-        if validation and (not self.is_configured and len(split_test_validation.messages) == 1):
-            validation.summary = split_test_validation.messages[0]
-        else:
-            validation.summary = self.descriptor.general_validation_message(split_test_validation)
-            validation.add_messages(split_test_validation)
-
-        return validation
-
+        return self.descriptor.validate(validation)
 
 @XBlock.needs('user_tags')  # pylint: disable=abstract-method
 @XBlock.wants('partitions')
@@ -381,6 +369,7 @@ class SplitTestDescriptor(SplitTestFields, SequenceDescriptor, StudioEditableDes
     child_descriptor = module_attr('child_descriptor')
     log_child_render = module_attr('log_child_render')
     get_content_titles = module_attr('get_content_titles')
+    # is_configured = module_attr('is_configured')
 
     def definition_to_xml(self, resource_fs):
         xml_object = etree.Element('split_test')
@@ -526,7 +515,28 @@ class SplitTestDescriptor(SplitTestFields, SequenceDescriptor, StudioEditableDes
 
         return active_children, inactive_children
 
-    def _detailed_validation_messages(self):
+    @property
+    def is_configured(self):
+        return not self.user_partition_id == SplitTestFields.no_partition_selected['value']
+
+    def validate(self, base_validation=None):
+        if base_validation is None:
+            base_validation = StudioValidation(self.location)
+
+        split_test_validation = self.validate_split_test()
+
+        if split_test_validation:
+            return base_validation
+
+        if base_validation and (not self.is_configured and len(split_test_validation.messages) == 1):
+            base_validation.summary = split_test_validation.messages[0]
+        else:
+            base_validation.summary = self.general_validation_message(split_test_validation)
+            base_validation.add_messages(split_test_validation)
+
+        return base_validation
+
+    def validate_split_test(self):
         """
         Returns a StudioValidation object describing the current state of the split_test_module.
         """
@@ -588,7 +598,7 @@ class SplitTestDescriptor(SplitTestFields, SequenceDescriptor, StudioEditableDes
         TODO update doc
         """
         if validation is None:
-            validation = self._detailed_validation_messages()
+            validation = self.validate_split_test()
 
         if not validation:
             has_error = any(message["type"] == StudioValidation.MESSAGE_TYPES.ERROR for message in validation.messages)
