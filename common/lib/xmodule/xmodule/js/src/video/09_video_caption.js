@@ -775,6 +775,7 @@ function (Sjson, AsyncProcess) {
 
         /**
         * @desc Shows/Hides captions and updates the cookie.
+         * Modified Hackathon -- to show Closed Captions instead of the transcript window
         *
         * @param {boolean} hide_captions if `true` hides the caption,
         *     otherwise - show.
@@ -793,12 +794,14 @@ function (Sjson, AsyncProcess) {
             if (hide_captions) {
                 type = 'hide_transcript';
                 state.captionsHidden = true;
-                state.el.addClass('closed');
+                $('.current-caption').hide();
+//                state.el.addClass('closed');
                 text = gettext('Turn on captions');
             } else {
                 type = 'show_transcript';
                 state.captionsHidden = false;
-                state.el.removeClass('closed');
+                $('.current-caption').show();
+//                state.el.removeClass('closed');
                 this.scrollCaption();
                 text = gettext('Turn off captions');
             }
@@ -829,6 +832,63 @@ function (Sjson, AsyncProcess) {
                 });
             }
         },
+
+//        /**
+//        * @desc Shows/Hides captions and updates the cookie.
+//        *
+//        * @param {boolean} hide_captions if `true` hides the caption,
+//        *     otherwise - show.
+//        * @param {boolean} update_cookie Flag to update or not the cookie.
+//        *
+//        */
+//        hideCaptions: function (hide_captions, update_cookie) {
+//            var hideSubtitlesEl = this.hideSubtitlesEl,
+//                state = this.state,
+//                type, text;
+//
+//            if (typeof update_cookie === 'undefined') {
+//                update_cookie = true;
+//            }
+//
+//            if (hide_captions) {
+//                type = 'hide_transcript';
+//                state.captionsHidden = true;
+//                state.el.addClass('closed');
+//                text = gettext('Turn on captions');
+//            } else {
+//                type = 'show_transcript';
+//                state.captionsHidden = false;
+//                state.el.removeClass('closed');
+//                this.scrollCaption();
+//                text = gettext('Turn off captions');
+//            }
+//
+//            hideSubtitlesEl
+//                .attr('title', text)
+//                .text(gettext(text));
+//
+//            if (state.videoPlayer) {
+//                state.videoPlayer.log(type, {
+//                    currentTime: state.videoPlayer.currentTime
+//                });
+//            }
+//
+//            if (state.resizer) {
+//                if (state.isFullScreen) {
+//                    state.resizer.setMode('both');
+//                } else {
+//                    state.resizer.alignByWidthOnly();
+//                }
+//            }
+//
+//            this.setSubtitlesHeight();
+//            if (update_cookie) {
+//                $.cookie('hide_captions', hide_captions, {
+//                    expires: 3650,
+//                    path: '/'
+//                });
+//            }
+//        },
 
         /**
         * @desc Return the caption container height.
