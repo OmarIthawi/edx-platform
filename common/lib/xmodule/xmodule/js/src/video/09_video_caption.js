@@ -800,17 +800,17 @@ function (Sjson, AsyncProcess) {
             if (typeof update_cookie === 'undefined') {
                 update_cookie = true;
             }
-
+            console.log('here is your button handler');
             if (hide_captions) {
                 type = 'hide_transcript';
                 state.captionsHidden = true;
-                $('.current-caption').hide();
+                $(this.container.context).find('section.current-caption').hide();
 //                state.el.addClass('closed');
                 text = gettext('Turn on captions');
             } else {
                 type = 'show_transcript';
                 state.captionsHidden = false;
-                $('.current-caption').show();
+                $(this.container.context).find('section.current-caption').show();
 //                state.el.removeClass('closed');
                 this.scrollCaption();
                 text = gettext('Turn off captions');
