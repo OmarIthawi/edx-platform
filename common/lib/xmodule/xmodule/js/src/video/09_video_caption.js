@@ -346,6 +346,7 @@ function (Sjson, AsyncProcess) {
 
             this.scrollCaption();
             this.setSubtitlesHeight();
+            this.setCurrentCaptionWidth();
         },
 
         /**
@@ -914,6 +915,16 @@ function (Sjson, AsyncProcess) {
             } else {
                 return state.container.height();
             }
+        },
+
+        /**
+        * @desc Sets the height of the caption container element.
+        *
+        */
+        setCurrentCaptionWidth: function () {
+            var parentEl = this.container.closest('.video-wrapper');
+            var videoWidth = parentEl.find('.video-player').width();
+            parentEl.find('.current-caption').width(videoWidth);
         },
 
         /**

@@ -83,13 +83,12 @@ div.video {
 
     section.current-caption {
       background: rgba(255, 0, 0, 0.9); // / TODO: Convert this to black with opacity = 0.80
-      padding: 0 5px; // TODO: top and botton to equal 5px as well
+      padding: 5px;
       text-align: center;
       color: white;
       font-weight: 700;
-//      box-sizing: border-box; // TODO activate this!
-
-      bottom: 50px;
+      box-sizing: border-box;
+      bottom: 70px;
       left: 0;
       position: absolute;
       width: 100%;
