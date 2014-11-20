@@ -688,19 +688,11 @@ function (Sjson, AsyncProcess) {
 
 
                     var parentEl = this.container.closest('.video-wrapper');
-                    var siblingEl = parentEl.find('.video-controls');
 
-                    parentEl.find('.current-caption').remove();
+                    var currentTranscriptEl = this.subtitlesEl.find("li[data-index='" + newIndex + "']");
+                    currentTranscriptEl.addClass('current');
 
-                    var currentEl = this.subtitlesEl.find("li[data-index='" + newIndex + "']");
-                    currentEl.addClass('current');
-
-                    var currentCaptionEl = $('<section>').text(currentEl.text());
-                    currentCaptionEl.addClass('current-caption');
-                    siblingEl.before(currentCaptionEl);
-
-                    console.log('Omar: currentCaptionEl', currentCaptionEl);
-
+                    parentEl.find('section.caption').text(currentTranscriptEl.text());
 
                     this.currentIndex = newIndex;
                     this.scrollCaption();
@@ -777,10 +769,13 @@ function (Sjson, AsyncProcess) {
         toggle: function (event) {
             event.preventDefault();
 
-            if (this.state.el.hasClass('closed')) {
-                this.hideCaptions(false);
-            } else {
+            var parentEl = this.container.closest('.video-wrapper');
+            var videoWidth = parentEl.find('.video-player').width();
+
+            if (parentEl.find('section.caption').is(':visible')) {
                 this.hideCaptions(true);
+            } else {
+                this.hideCaptions(false);
             }
         },
 
@@ -805,13 +800,13 @@ function (Sjson, AsyncProcess) {
             if (hide_captions) {
                 type = 'hide_transcript';
                 state.captionsHidden = true;
-                $(this.container.context).find('section.current-caption').hide();
+                $(this.container.context).find('section.caption').hide();
 //                state.el.addClass('closed');
                 text = gettext('Turn on captions');
             } else {
                 type = 'show_transcript';
                 state.captionsHidden = false;
-                $(this.container.context).find('section.current-caption').show();
+                $(this.container.context).find('section.caption').show();
 //                state.el.removeClass('closed');
                 this.scrollCaption();
                 text = gettext('Turn off captions');
@@ -924,7 +919,7 @@ function (Sjson, AsyncProcess) {
         setCurrentCaptionWidth: function () {
             var parentEl = this.container.closest('.video-wrapper');
             var videoWidth = parentEl.find('.video-player').width();
-            parentEl.find('.current-caption').width(videoWidth);
+            parentEl.find('section.caption').width(videoWidth);
         },
 
         /**
