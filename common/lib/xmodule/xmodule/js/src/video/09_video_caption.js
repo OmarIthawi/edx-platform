@@ -692,7 +692,7 @@ function (Sjson, AsyncProcess) {
                     var currentTranscriptEl = this.subtitlesEl.find("li[data-index='" + newIndex + "']");
                     currentTranscriptEl.addClass('current');
 
-                    parentEl.find('section.caption').text(currentTranscriptEl.text());
+                    parentEl.find('section.caption span').text(currentTranscriptEl.text());
 
                     this.currentIndex = newIndex;
                     this.scrollCaption();
