@@ -69,7 +69,8 @@ function (Sjson, AsyncProcess) {
                 events = [
                     'mouseover', 'mouseout', 'mousedown', 'click', 'focus', 'blur',
                     'keydown'
-                ].join(' ');
+                ].join(' '),
+                $videoWrapper = $(this.container.context).find('.video-wrapper');
 
             // Change context to VideoCaption of event handlers using `bind`.
             this.hideSubtitlesEl.on('click', this.toggle.bind(this));
@@ -128,6 +129,12 @@ function (Sjson, AsyncProcess) {
             if ((state.videoType === 'html5') && (state.config.autohideHtml5)) {
                 this.subtitlesEl.on('scroll', state.videoControl.showControls);
             }
+
+            // make the captions draggable
+            $videoWrapper.find('section.caption .text')
+                .draggable({
+                    containment : $videoWrapper
+                });
         },
 
         /**
