@@ -295,7 +295,7 @@ function () {
             if ($transcriptIcon.hasClass('icon-caret-left')) {
                 $transcriptIconParent.css('right', '1%');
             } else {
-                $transcriptIconParent.css('right', '25%');
+                $transcriptIconParent.css('right', '24%');
             }
         } else {
             $transcriptIcon.removeClass('white');

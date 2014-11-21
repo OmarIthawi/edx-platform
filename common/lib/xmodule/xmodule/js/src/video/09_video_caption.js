@@ -924,7 +924,7 @@ function (Sjson, AsyncProcess) {
                     .addClass('icon-caret-right');
                 if (state.isFullScreen) {
                     // UGLY I know...
-                    $iconParent.css('right','25%');
+                    $iconParent.css('right','24%');
                 } else {
                     $iconParent.css('right', '-8px');
                 }

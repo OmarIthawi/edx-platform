@@ -659,8 +659,9 @@ div.video {
   span.transcript-toggle {
     position: absolute;
     right: -8px;
-    top: -5px;
+    top: 50%;
     cursor: pointer;
+    z-index: 999;
   }
 
   span.transcript-toggle i {
