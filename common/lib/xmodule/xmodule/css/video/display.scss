@@ -627,6 +627,7 @@ div.video {
     font-size: 14px;
     list-style: none;
     visibility: visible;
+    position: relative;
 
     li {
       border: 0;
@@ -655,12 +656,26 @@ div.video {
       }
     }
   }
+  span.transcript-toggle {
+    position: absolute;
+    right: -8px;
+    top: -5px;
+    cursor: pointer;
+  }
+
+  span.transcript-toggle i {
+    font-style: normal;
+    color: inherit;
+  }
+
+  span.transcript-toggle i.white {
+    color: white;
+  }
 
   &.closed {
 
     article.video-wrapper {
       width: flex-grid(9, 9);
-
       background-color: inherit;
     }
 

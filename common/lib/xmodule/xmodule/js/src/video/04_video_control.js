@@ -260,9 +260,13 @@ function () {
     }
 
     /** Toggle fullscreen mode. */
+    // also change the transcript toggle icon color
     function toggleFullScreen() {
         var fullScreenClassNameEl = this.el.add(document.documentElement),
-            win = $(window), text;
+            win = $(window),
+            $transcriptIcon = this.el.find('span.transcript-toggle i'),
+            $transcriptIconParent = $transcriptIcon.parent(),
+            text;
 
         if (this.videoControl.fullScreenState) {
             this.videoControl.fullScreenState = this.isFullScreen = false;
@@ -282,6 +286,21 @@ function () {
             .text(text);
 
         this.el.trigger('fullscreen', [this.isFullScreen]);
+
+        if (this.isFullScreen) {
+            // Need to re-adjust the CSS so that the icon appears on the screen
+            // This is definitely UGLY -- should be refactored in the template
+            // somehow
+            $transcriptIcon.addClass('white');
+            if ($transcriptIcon.hasClass('icon-caret-left')) {
+                $transcriptIconParent.css('right', '1%');
+            } else {
+                $transcriptIconParent.css('right', '25%');
+            }
+        } else {
+            $transcriptIcon.removeClass('white');
+            $transcriptIconParent.css('right', '-8px');
+        }
     }
 
     /**

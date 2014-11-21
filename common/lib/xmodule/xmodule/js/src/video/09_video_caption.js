@@ -135,6 +135,10 @@ function (Sjson, AsyncProcess) {
                 .draggable({
                     containment : $videoWrapper
                 });
+
+            // bind the transcript toggle icon
+            $videoWrapper.find('span.transcript-toggle')
+                .on('click', this.toggleTranscript.bind(this));
         },
 
         /**
@@ -214,9 +218,9 @@ function (Sjson, AsyncProcess) {
         *         specified for the Youtube type player.
         */
         fetchCaption: function () {
-            console.log('Omar3: this', this);
+//            console.log('Omar3: this', this);
 
-            console.log('Omar3: this.subtitlesEl', this.subtitlesEl);
+//            console.log('Omar3: this.subtitlesEl', this.subtitlesEl);
 
 
             var self = this,
@@ -667,9 +671,9 @@ function (Sjson, AsyncProcess) {
         *
         */
         updatePlayTime: function (time) {
-            console.log('Omar3: this', this);
+//            console.log('Omar3: this', this);
 
-            console.log('Omar3: this.subtitlesEl', this.subtitlesEl);
+//            console.log('Omar3: this.subtitlesEl', this.subtitlesEl);
 
             var state = this.state,
                 newIndex;
@@ -838,70 +842,104 @@ function (Sjson, AsyncProcess) {
             }
 
             this.setSubtitlesHeight();
-            if (update_cookie) {
-                $.cookie('hide_captions', hide_captions, {
-                    expires: 3650,
-                    path: '/'
-                });
-            }
-        },
-
-//        /**
-//        * @desc Shows/Hides captions and updates the cookie.
-//        *
-//        * @param {boolean} hide_captions if `true` hides the caption,
-//        *     otherwise - show.
-//        * @param {boolean} update_cookie Flag to update or not the cookie.
-//        *
-//        */
-//        hideCaptions: function (hide_captions, update_cookie) {
-//            var hideSubtitlesEl = this.hideSubtitlesEl,
-//                state = this.state,
-//                type, text;
-//
-//            if (typeof update_cookie === 'undefined') {
-//                update_cookie = true;
-//            }
-//
-//            if (hide_captions) {
-//                type = 'hide_transcript';
-//                state.captionsHidden = true;
-//                state.el.addClass('closed');
-//                text = gettext('Turn on captions');
-//            } else {
-//                type = 'show_transcript';
-//                state.captionsHidden = false;
-//                state.el.removeClass('closed');
-//                this.scrollCaption();
-//                text = gettext('Turn off captions');
-//            }
-//
-//            hideSubtitlesEl
-//                .attr('title', text)
-//                .text(gettext(text));
-//
-//            if (state.videoPlayer) {
-//                state.videoPlayer.log(type, {
-//                    currentTime: state.videoPlayer.currentTime
-//                });
-//            }
-//
-//            if (state.resizer) {
-//                if (state.isFullScreen) {
-//                    state.resizer.setMode('both');
-//                } else {
-//                    state.resizer.alignByWidthOnly();
-//                }
-//            }
-//
-//            this.setSubtitlesHeight();
 //            if (update_cookie) {
 //                $.cookie('hide_captions', hide_captions, {
 //                    expires: 3650,
 //                    path: '/'
 //                });
 //            }
-//        },
+        },
+
+        /**
+        * @desc Shows/Hides the transcript and updates the cookie.
+        *
+        * @param {boolean} update_cookie Flag to update or not the cookie.
+        *
+        */
+        toggleTranscript: function (update_cookie) {
+            var hideTranscriptEl = this.hideSubtitlesEl,
+                state = this.state,
+                type, text;
+
+            if (typeof update_cookie === 'undefined') {
+                update_cookie = true;
+            }
+
+            if (!state.el.hasClass('closed')) {
+                type = 'hide_transcript';
+                state.captionsHidden = true;
+                state.el.addClass('closed');
+                text = gettext('Show transcript');
+            } else {
+                type = 'show_transcript';
+                state.captionsHidden = false;
+                state.el.removeClass('closed');
+                this.scrollCaption();
+                text = gettext('Hide transcript');
+            }
+
+            hideTranscriptEl
+                .attr('title', text)
+                .text(gettext(text));
+
+            if (state.videoPlayer) {
+                state.videoPlayer.log(type, {
+                    currentTime: state.videoPlayer.currentTime
+                });
+            }
+
+            if (state.resizer) {
+                if (state.isFullScreen) {
+                    state.resizer.setMode('both');
+                } else {
+                    state.resizer.alignByWidthOnly();
+                }
+            }
+
+            this.setSubtitlesHeight();
+            this.toggleTranscriptIcon();
+            this.setCurrentCaptionWidth();
+
+
+            if (update_cookie) {
+                $.cookie('hide_captions', state.captionsHidden, {  // this should really be "hide_transcripts" for the cookie name...
+                    expires: 3650,
+                    path: '/'
+                });
+            }
+        },
+
+        /* @desc Changes the location / direction of the transcript toggle icon
+         *
+         * @returns {*}
+         */
+        toggleTranscriptIcon: function () {
+            var $icon = $(this.container.context).find('span.transcript-toggle i'),
+                $iconParent = $icon.parent(),
+                state = this.state;
+
+            if ($icon.hasClass('icon-caret-left')) {
+                // change to caret-right
+                $icon.removeClass('icon-caret-left')
+                    .addClass('icon-caret-right');
+                if (state.isFullScreen) {
+                    // UGLY I know...
+                    $iconParent.css('right','25%');
+                } else {
+                    $iconParent.css('right', '-8px');
+                }
+            } else {
+                // change to caret-left
+                $icon.removeClass('icon-caret-right')
+                    .addClass('icon-caret-left');
+                if (state.isFullScreen) {
+                    // UGLY I know...
+                    $iconParent.css('right','1%');
+                } else {
+                    $iconParent.css('right', '-8px');
+                }
+            }
+        },
 
         /**
         * @desc Return the caption container height.
