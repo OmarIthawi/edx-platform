@@ -260,7 +260,7 @@ function () {
     }
 
     /** Toggle fullscreen mode. */
-    // also change the transcript toggle icon color
+    // Also change the transcript toggle icon color
     function toggleFullScreen() {
         var fullScreenClassNameEl = this.el.add(document.documentElement),
             win = $(window),

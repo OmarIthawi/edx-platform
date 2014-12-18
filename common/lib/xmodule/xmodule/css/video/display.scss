@@ -82,7 +82,6 @@ div.video {
     position: relative;
 
     section.caption {
-      text-align: center;
       bottom: 78px;
       left: 0;
       position: absolute;
@@ -94,7 +93,9 @@ div.video {
         padding: 8px 16px;
         box-sizing: border-box;
         cursor: pointer;
+        text-align: center;
 
+        // Stroke around the text
         text-shadow:
            0 0 5px #000,
            -1px -1px 1px #000,

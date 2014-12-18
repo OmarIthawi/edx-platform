@@ -130,13 +130,14 @@ function (Sjson, AsyncProcess) {
                 this.subtitlesEl.on('scroll', state.videoControl.showControls);
             }
 
-            // make the captions draggable
+            // Make the captions draggable
             $videoWrapper.find('section.caption .text')
                 .draggable({
+                    axis: 'y',
                     containment : $videoWrapper
                 });
 
-            // bind the transcript toggle icon
+            // Bind the transcript toggle icon
             $videoWrapper.find('span.transcript-toggle')
                 .on('click', this.toggleTranscript.bind(this));
         },
@@ -218,11 +219,6 @@ function (Sjson, AsyncProcess) {
         *         specified for the Youtube type player.
         */
         fetchCaption: function () {
-//            console.log('Omar3: this', this);
-
-//            console.log('Omar3: this.subtitlesEl', this.subtitlesEl);
-
-
             var self = this,
                 state = this.state,
                 language = state.getCurrentLanguage(),
@@ -350,10 +346,6 @@ function (Sjson, AsyncProcess) {
                 .height(this.topSpacingHeight()).end()
                 .find('.spacing').last()
                 .height(this.bottomSpacingHeight());
-
-
-
-            console.log('Omar: on resize');
 
             this.scrollCaption();
             this.setSubtitlesHeight();
@@ -671,10 +663,6 @@ function (Sjson, AsyncProcess) {
         *
         */
         updatePlayTime: function (time) {
-//            console.log('Omar3: this', this);
-
-//            console.log('Omar3: this.subtitlesEl', this.subtitlesEl);
-
             var state = this.state,
                 newIndex;
 
@@ -807,18 +795,16 @@ function (Sjson, AsyncProcess) {
             if (typeof update_cookie === 'undefined') {
                 update_cookie = true;
             }
-            console.log('here is your button handler');
+
             if (hide_captions) {
                 type = 'hide_transcript';
                 state.captionsHidden = true;
                 $(this.container.context).find('section.caption').hide();
-//                state.el.addClass('closed');
                 text = gettext('Turn on captions');
             } else {
                 type = 'show_transcript';
                 state.captionsHidden = false;
                 $(this.container.context).find('section.caption').show();
-//                state.el.removeClass('closed');
                 this.scrollCaption();
                 text = gettext('Turn off captions');
             }
@@ -842,12 +828,6 @@ function (Sjson, AsyncProcess) {
             }
 
             this.setSubtitlesHeight();
-//            if (update_cookie) {
-//                $.cookie('hide_captions', hide_captions, {
-//                    expires: 3650,
-//                    path: '/'
-//                });
-//            }
         },
 
         /**
@@ -902,7 +882,8 @@ function (Sjson, AsyncProcess) {
 
 
             if (update_cookie) {
-                $.cookie('hide_captions', state.captionsHidden, {  // this should really be "hide_transcripts" for the cookie name...
+                // This should really be "hide_transcripts" for the cookie name...
+                $.cookie('hide_captions', state.captionsHidden, {  //
                     expires: 3650,
                     path: '/'
                 });
