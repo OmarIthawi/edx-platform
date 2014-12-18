@@ -687,7 +687,7 @@ function (Sjson, AsyncProcess) {
                     }
 
 
-                    // TODO: Make it DOM independet, i.e. get the data from somewhere else
+                    // TODO: Make it DOM independent, i.e. get the data from somewhere else
                     var parentEl = this.container.closest('.video-wrapper');
 
                     var currentTranscriptEl = this.subtitlesEl.find("li[data-index='" + newIndex + "']");
