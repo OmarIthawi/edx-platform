@@ -657,21 +657,22 @@ div.video {
       }
     }
   }
+
   span.transcript-toggle {
     position: absolute;
     right: -8px;
     top: 50%;
     cursor: pointer;
     z-index: 999;
-  }
 
-  span.transcript-toggle i {
-    font-style: normal;
-    color: inherit;
-  }
+     i {
+       font-style: normal;
+       color: inherit;
 
-  span.transcript-toggle i.white {
-    color: white;
+       &.white {
+         color: white;
+       }
+     }
   }
 
   &.closed {

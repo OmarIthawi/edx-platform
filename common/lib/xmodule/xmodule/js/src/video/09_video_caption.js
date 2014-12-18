@@ -31,6 +31,7 @@ function (Sjson, AsyncProcess) {
         return $.Deferred().resolve().promise();
     };
 
+    // TODO: Make the difference clear between captions and transcripts
     VideoCaption.prototype = {
         /**
         * @desc Initiate rendering of elements, and set their initial configuration.
@@ -686,6 +687,7 @@ function (Sjson, AsyncProcess) {
                     }
 
 
+                    // TODO: Make it DOM independet, i.e. get the data from somewhere else
                     var parentEl = this.container.closest('.video-wrapper');
 
                     var currentTranscriptEl = this.subtitlesEl.find("li[data-index='" + newIndex + "']");
@@ -771,11 +773,7 @@ function (Sjson, AsyncProcess) {
             var parentEl = this.container.closest('.video-wrapper');
             var videoWidth = parentEl.find('.video-player').width();
 
-            if (parentEl.find('section.caption').is(':visible')) {
-                this.hideCaptions(true);
-            } else {
-                this.hideCaptions(false);
-            }
+            this.hideCaptions(parentEl.find('section.caption').is(':visible'));
         },
 
         /**
@@ -828,6 +826,14 @@ function (Sjson, AsyncProcess) {
             }
 
             this.setSubtitlesHeight();
+
+//            TODO: Active this
+//            if (update_cookie) {
+//                $.cookie('hide_captions', state.captionsHidden, {  //
+//                    expires: 3650,
+//                    path: '/'
+//                });
+//            }
         },
 
         /**
@@ -882,7 +888,7 @@ function (Sjson, AsyncProcess) {
 
 
             if (update_cookie) {
-                // This should really be "hide_transcripts" for the cookie name...
+                // TODO: This should really be "hide_transcripts" for the cookie name...
                 $.cookie('hide_captions', state.captionsHidden, {  //
                     expires: 3650,
                     path: '/'

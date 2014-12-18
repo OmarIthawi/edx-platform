@@ -288,7 +288,7 @@ function () {
         this.el.trigger('fullscreen', [this.isFullScreen]);
 
         if (this.isFullScreen) {
-            // Need to re-adjust the CSS so that the icon appears on the screen
+            // TODO: Need to re-adjust the CSS so that the icon appears on the screen
             // This is definitely UGLY -- should be refactored in the template
             // somehow
             $transcriptIcon.addClass('white');
