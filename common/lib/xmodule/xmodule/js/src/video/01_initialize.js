@@ -239,7 +239,6 @@ function (VideoPlayer, VideoStorage, i18n) {
     //
     //     represents the user's choice of having the subtitles shown or
     //     hidden. This choice is stored in cookies.
-    // TODO: Add the same method for transcripts
     function _configureCaptions(state) {
         if (state.config.showCaptions) {
             state.hide_captions = ($.cookie('hide_captions') === 'true');
@@ -251,9 +250,34 @@ function (VideoPlayer, VideoStorage, i18n) {
                 path: '/'
             });
 
-            console.log('Omar:', 'state', state);
-            console.log('Omar:', 'state.el', state.el);
             state.el.addClass('closed');
+        }
+    }
+
+    // function _configureClosedCaptions(state)
+    //     Configure displaying of closed captions.
+    //
+    //     Option
+    //         this.config.showClosedCaptions = true | false
+    //
+    //     Defines whether or not closed captions are shown on first viewing.
+    //
+    //     Option
+    //          this.hide_closed_captions = true | false
+    //
+    //     represents the user's choice of having the closed captions shown or
+    //     hidden. This choice is stored in cookies.
+    function _configureClosedCaptions(state) {
+        debugger;
+        if (state.config.showClosedCaptions) {
+            state.hide_closed_captions = ($.cookie('hide_closed_captions') === 'true');
+        } else {
+            state.hide_closed_captions = true;
+
+            $.cookie('hide_closed_captions', state.hide_closed_captions, {
+                expires: 3650,
+                path: '/'
+            });
         }
     }
 
@@ -302,6 +326,7 @@ function (VideoPlayer, VideoStorage, i18n) {
         if (!state.config.sub || !state.config.sub.length) {
             state.config.sub = '';
             state.config.showCaptions = false;
+            state.config.showClosedCaptions = false;
         }
         state.setSpeed(state.speed);
 
@@ -320,6 +345,7 @@ function (VideoPlayer, VideoStorage, i18n) {
 
     function _setConfigurations(state) {
         _configureCaptions(state);
+        _configureClosedCaptions(state);
         state.setPlayerMode(state.config.mode);
         // Possible value are: 'visible', 'hiding', and 'invisible'.
         state.controlState = 'visible';
@@ -360,6 +386,7 @@ function (VideoPlayer, VideoStorage, i18n) {
                 // Conversions used to pre-process some configuration data.
                 conversions = {
                     'showCaptions': isBoolean,
+                    'showClosedCaptions': isBoolean,
                     'autoplay': isBoolean,
                     'autohideHtml5': isBoolean,
                     'savedVideoPosition': function (value) {

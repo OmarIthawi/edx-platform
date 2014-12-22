@@ -783,7 +783,9 @@ function (Sjson, AsyncProcess) {
             var parentEl = this.container.closest('.video-wrapper');
             var videoWidth = parentEl.find('.video-player').width();
 
-            this.hideClosedCaptions(parentEl.find('section.caption').is(':visible'));
+            var hide_closed_captions = parentEl.find('section.caption').is(':visible');
+
+            this.hideClosedCaptions(hide_closed_captions);
         },
 
         /**
