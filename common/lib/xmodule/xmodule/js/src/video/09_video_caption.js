@@ -855,9 +855,6 @@ function (Sjson, AsyncProcess) {
         */
         toggleCaptions: function () {
             var hide_captions = !this.state.el.hasClass('closed');
-
-            debugger;
-
             this.hideCaptions(hide_captions);
         },
 
@@ -873,8 +870,6 @@ function (Sjson, AsyncProcess) {
 //            var hideTranscriptEl = this.hideSubtitlesEl, // TODO: This should be the small arrow instead
               var state = this.state,
                 type, text;
-
-            debugger;
 
             if (typeof update_cookie === 'undefined') {
                 update_cookie = true;
