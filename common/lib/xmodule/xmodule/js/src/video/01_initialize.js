@@ -239,6 +239,7 @@ function (VideoPlayer, VideoStorage, i18n) {
     //
     //     represents the user's choice of having the subtitles shown or
     //     hidden. This choice is stored in cookies.
+    // TODO: Add the same method for transcripts
     function _configureCaptions(state) {
         if (state.config.showCaptions) {
             state.hide_captions = ($.cookie('hide_captions') === 'true');
@@ -250,6 +251,8 @@ function (VideoPlayer, VideoStorage, i18n) {
                 path: '/'
             });
 
+            console.log('Omar:', 'state', state);
+            console.log('Omar:', 'state.el', state.el);
             state.el.addClass('closed');
         }
     }
