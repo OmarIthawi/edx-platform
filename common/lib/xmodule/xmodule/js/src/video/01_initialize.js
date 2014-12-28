@@ -268,7 +268,6 @@ function (VideoPlayer, VideoStorage, i18n) {
     //     represents the user's choice of having the closed captions shown or
     //     hidden. This choice is stored in cookies.
     function _configureClosedCaptions(state) {
-        debugger;
         if (state.config.showClosedCaptions) {
             state.hide_closed_captions = ($.cookie('hide_closed_captions') === 'true');
         } else {

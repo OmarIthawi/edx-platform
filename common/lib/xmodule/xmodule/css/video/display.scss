@@ -85,7 +85,7 @@ div.video {
       bottom: 78px;
       left: 0;
       position: absolute;
-      width: 100%;
+      width: flex-grid(6, 9);
 
       .text {
         color: white;
@@ -668,10 +668,6 @@ div.video {
      i {
        font-style: normal;
        color: inherit;
-
-       &.white {
-         color: white;
-       }
      }
   }
 
@@ -717,9 +713,22 @@ div.video {
       z-index: 0;
       display: none;
     }
+
+    span.transcript-toggle {
+       i:before {
+         content: "\f0d9"; // Overriding `.icon-caret-right` to make it `.icon-caret-left`
+       }
+    }
+
+    article.video-wrapper section.closed-caption {
+      width: 100%;
+    }
   }
 
   &.video-fullscreen {
+    $captionsWidthOpen: 24%;
+    $captionsButtonWidth: 0.4%;
+
     background: rgba(#000, .95);
     border: 0;
     bottom: 0;
@@ -734,11 +743,31 @@ div.video {
     vertical-align: middle;
     border-radius: 0;
 
+    span.transcript-toggle {
+       right: $captionsWidthOpen + $captionsButtonWidth;
+
+       &, i {
+         color: white;
+       }
+    }
+
+    article.video-wrapper section.closed-caption {
+      width: 100% - ($captionsWidthOpen + $captionsButtonWidth);
+    }
+
     &.closed {
       div.tc-wrapper {
         article.video-wrapper {
           width: 100%;
         }
+      }
+
+      span.transcript-toggle {
+        right: $captionsButtonWidth;
+      }
+
+      article.video-wrapper section.closed-caption {
+        width: 100% - $captionsButtonWidth;
       }
     }
 

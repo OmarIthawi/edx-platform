@@ -286,21 +286,6 @@ function () {
             .text(text);
 
         this.el.trigger('fullscreen', [this.isFullScreen]);
-
-        if (this.isFullScreen) {
-            // TODO: Need to re-adjust the CSS so that the icon appears on the screen
-            // This is definitely UGLY -- should be refactored in the template
-            // somehow
-            $transcriptIcon.addClass('white');
-            if ($transcriptIcon.hasClass('icon-caret-left')) {
-                $transcriptIconParent.css('right', '1%');
-            } else {
-                $transcriptIconParent.css('right', '24%');
-            }
-        } else {
-            $transcriptIcon.removeClass('white');
-            $transcriptIconParent.css('right', '-8px');
-        }
     }
 
     /**

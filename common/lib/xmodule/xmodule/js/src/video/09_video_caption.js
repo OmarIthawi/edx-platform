@@ -358,7 +358,6 @@ function (Sjson, AsyncProcess) {
 
             this.scrollCaption();
             this.setSubtitlesHeight();
-            this.setClosedCaptionWidth();
         },
 
         /**
@@ -908,8 +907,6 @@ function (Sjson, AsyncProcess) {
 
             this.setSubtitlesHeight();
             this.toggleTranscriptIcon();
-            this.setClosedCaptionWidth(); // TODO: Shouldn't this be in `hideClosedCaptions()` instead?
-
 
             if (update_cookie) {
                 $.cookie('hide_captions', state.captionsHidden, {
@@ -927,29 +924,6 @@ function (Sjson, AsyncProcess) {
             var $icon = $(this.container.context).find('span.transcript-toggle i'),
                 $iconParent = $icon.parent(),
                 state = this.state;
-
-            // TODO: Put it in the CSS
-            if ($icon.hasClass('icon-caret-left')) {
-                // change to caret-right
-                $icon.removeClass('icon-caret-left')
-                    .addClass('icon-caret-right');
-                if (state.isFullScreen) {
-                    // UGLY I know...
-                    $iconParent.css('right','24%');
-                } else {
-                    $iconParent.css('right', '-8px');
-                }
-            } else {
-                // change to caret-left
-                $icon.removeClass('icon-caret-right')
-                    .addClass('icon-caret-left');
-                if (state.isFullScreen) {
-                    // UGLY I know...
-                    $iconParent.css('right','1%');
-                } else {
-                    $iconParent.css('right', '-8px');
-                }
-            }
         },
 
         /**
@@ -966,16 +940,6 @@ function (Sjson, AsyncProcess) {
             } else {
                 return state.container.height();
             }
-        },
-
-        /**
-        * @desc Sets the height of the closed caption container element.
-        *
-        */
-        setClosedCaptionWidth: function () {
-            var parentEl = this.container.closest('.video-wrapper');
-            var videoWidth = parentEl.find('.video-player').width();
-            parentEl.find('section.caption').width(videoWidth);
         },
 
         /**
