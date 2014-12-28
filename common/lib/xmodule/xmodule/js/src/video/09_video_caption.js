@@ -17,6 +17,8 @@ function (Sjson, AsyncProcess) {
      *
      * @this {object} The global window object.
      *
+     *  // TODO: How to include Draggabilly correctly?
+     *
      * @returns {jquery Promise}
      */
     var VideoCaption = function (state) {
@@ -134,13 +136,10 @@ function (Sjson, AsyncProcess) {
             }
 
             // Make the captions draggable
-            // TODO: Use section.caption instead to possibly get rid of glitches
-            // TODO: Shouldn't this move to `caption:update` instead?
-            $videoWrapper.find('section.caption .text')
-                .draggable({
-                    axis: 'y',
-                    containment : $videoWrapper
-                });
+            new Draggabilly($videoWrapper.find('section.closed-caption .text').get(0), {
+                axis: 'y',
+                containment: $videoWrapper.get(0)
+            });
 
             // Bind the transcript toggle icon
             $videoWrapper.find('span.transcript-toggle')
