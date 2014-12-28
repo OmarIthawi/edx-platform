@@ -696,14 +696,15 @@ function (Sjson, AsyncProcess) {
                             .removeClass('current');
                     }
 
+                    this.subtitlesEl
+                        .find("li[data-index='" + newIndex + "']")
+                        .addClass('current');
 
-                    // TODO: Make it DOM independent, i.e. get the data from somewhere else
-                    var parentEl = this.container.closest('.video-wrapper');
 
-                    var currentTranscriptEl = this.subtitlesEl.find("li[data-index='" + newIndex + "']");
-                    currentTranscriptEl.addClass('current');
-
-                    parentEl.find('section.caption .text').text(currentTranscriptEl.text());
+                    var captions = this.sjson.getCaptions();
+                    var parentEl = this.container.closest('.video-wrapper')
+                                       .find('section.caption .text')
+                                       .text(captions[newIndex]);
 
                     this.currentIndex = newIndex;
                     this.scrollCaption();
