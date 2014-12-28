@@ -82,18 +82,22 @@ div.video {
     position: relative;
 
     section.closed-caption {
-      bottom: 78px;
+      bottom: 0;
       left: 0;
       position: absolute;
-      width: flex-grid(6, 9);
+      width: 100%;
 
       .text {
         color: white;
         font-weight: 700;
-        padding: 8px 16px;
         box-sizing: border-box;
         cursor: pointer;
         text-align: center;
+
+        // Let Draggabilly do correct containment
+        min-height: 25px;
+        padding: 8px 16px 61px;
+        margin-bottom: 0;
 
         // Stroke around the text
         text-shadow:
@@ -719,10 +723,6 @@ div.video {
          content: "\f0d9"; // Overriding `.icon-caret-right` to make it `.icon-caret-left`
        }
     }
-
-    article.video-wrapper section.closed-caption {
-      width: 100%;
-    }
   }
 
   &.video-fullscreen {
@@ -753,6 +753,10 @@ div.video {
 
     article.video-wrapper section.closed-caption {
       width: 100% - ($captionsWidthOpen + $captionsButtonWidth);
+
+      .text {
+        font-size: 1.3em;
+      }
     }
 
     &.closed {
@@ -767,7 +771,7 @@ div.video {
       }
 
       article.video-wrapper section.closed-caption {
-        width: 100% - $captionsButtonWidth;
+        width: 100%;
       }
     }
 
