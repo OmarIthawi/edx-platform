@@ -96,8 +96,8 @@ div.video {
 
         // Let Draggabilly do correct containment
         min-height: 25px;
-        padding: 8px 16px 61px;
-        margin-bottom: 4px;
+        padding: 8px 16px 80px;
+        margin-bottom: 0;
 
         // Stroke around the text
         text-shadow:
@@ -350,7 +350,7 @@ div.video {
         div.volume > a,
         a.add-fullscreen,
         a.quality-control,
-        a.hide-subtitles {
+        a.hide-closed-captions {
           // overflow is used to bypass Firefox CSS :focus outline bug
           // http://johndoesdesign.com/blog/2012/css/firefox-and-its-css-focus-outline-bug/
           &:focus {
@@ -584,7 +584,7 @@ div.video {
         }
 
         div.lang {
-          & > a.hide-subtitles {
+          & > a.hide-closed-captions {
             @extend %video-button;
             @include transition(none);
             box-shadow: inset 1px 0 0 #555;
@@ -662,7 +662,7 @@ div.video {
     }
   }
 
-  span.transcript-toggle {
+  span.hide-captions {
     position: absolute;
     right: -8px;
     top: 50%;
@@ -718,7 +718,7 @@ div.video {
       display: none;
     }
 
-    span.transcript-toggle {
+    span.hide-captions {
        i:before {
          content: "\f0d9"; // Overriding `.icon-caret-right` to make it `.icon-caret-left`
        }
@@ -743,7 +743,7 @@ div.video {
     vertical-align: middle;
     border-radius: 0;
 
-    span.transcript-toggle {
+    span.hide-captions {
        right: $captionsWidthOpen + $captionsButtonWidth;
 
        &, i {
@@ -766,7 +766,7 @@ div.video {
         }
       }
 
-      span.transcript-toggle {
+      span.hide-captions {
         right: $captionsButtonWidth;
       }
 

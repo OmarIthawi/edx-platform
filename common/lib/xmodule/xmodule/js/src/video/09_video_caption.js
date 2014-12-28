@@ -42,10 +42,12 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                 languages = this.state.config.transcriptLanguages;
 
             this.loaded = false;
-            this.subtitlesEl = state.el.find('ol.subtitles');
             this.container = state.el.find('.lang');
-            this.hideSubtitlesEl = state.el.find('a.hide-subtitles');
-            this.transcriptToggleEl = state.el.find('span.transcript-toggle');
+
+            this.hideCaptionsEl = state.el.find('span.hide-captions');
+            this.subtitlesEl = state.el.find('ol.subtitles');
+
+            this.hideClosedCaptionsEl = state.el.find('a.hide-closed-captions');
             this.closedCaptionsEl = state.el.find('section.closed-caption');
 
             if (_.keys(languages).length) {
@@ -54,12 +56,12 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                 if (!this.fetchCaption()) {
                     this.hideCaptions(true);
                     this.hideClosedCaptions(true);
-                    this.hideSubtitlesEl.hide();
+                    this.hideClosedCaptionsEl.hide();
                 }
             } else {
                 this.hideCaptions(true, false);
                 this.hideClosedCaptions(true, false);
-                this.hideSubtitlesEl.hide();
+                this.hideClosedCaptionsEl.hide();
             }
         },
 
@@ -77,7 +79,7 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                 ].join(' ');
 
             // Change context to VideoCaption of event handlers using `bind`.
-            this.hideSubtitlesEl.on('click', this.toggle.bind(this));
+            this.hideClosedCaptionsEl.on('click', this.toggleClosedCaptions.bind(this));
             this.subtitlesEl
                 .on({
                     mouseenter: this.onMouseEnter.bind(this),
@@ -140,8 +142,8 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                 containment: state.el.find('.video-wrapper').get(0)
             });
 
-            // Bind the transcript toggle icon
-            this.transcriptToggleEl
+            // Bind the captions toggle icon
+            this.hideCaptionsEl
                 .on('click', this.toggleCaptions.bind(this));
         },
 
@@ -299,7 +301,7 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                     } else {
                         self.hideCaptions(true, false);
                         self.hideClosedCaptions(true, false);
-                        self.hideSubtitlesEl.hide();
+                        self.hideClosedCaptionsEl.hide();
                     }
                 }
             });
@@ -338,7 +340,7 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                 error: function (jqXHR, textStatus, errorThrown) {
                     self.hideCaptions(true, false);
                     self.hideClosedCaptions(true, false);
-                    self.hideSubtitlesEl.hide();
+                    self.hideClosedCaptionsEl.hide();
                 }
             });
         },
@@ -768,12 +770,12 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
         },
 
         /**
-        * @desc Shows/Hides captions on click `CC` button
+        * @desc Shows/Hides closed captions on click `CC` button
         *
         * @param {jquery Event} event
         *
         */
-        toggle: function (event) {
+        toggleClosedCaptions: function (event) {
             event.preventDefault();
 
             var hide_closed_captions = this.closedCaptionsEl.is(':visible');
@@ -790,8 +792,7 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
         *
         */
         hideClosedCaptions: function (hide_closed_captions, update_cookie) {
-            // TODO: Make the difference clear between captions and transcripts
-            var hideSubtitlesEl = this.hideSubtitlesEl,
+            var hideClosedCaptionsEl = this.hideClosedCaptionsEl,
                 state = this.state,
                 type, text;
 
@@ -811,7 +812,7 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                 text = gettext('Turn off closed captions');
             }
 
-            hideSubtitlesEl
+            hideClosedCaptionsEl
                 .attr('title', text)
                 .text(gettext(text));
 
@@ -832,7 +833,7 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
             this.setSubtitlesHeight();
 
             if (update_cookie) {
-                $.cookie('hide_closed_captions', state.closedCaptionsHidden, {
+                $.cookie('hide_closed_captions', hide_closed_captions, {
                     expires: 3650,
                     path: '/'
                 });
@@ -859,23 +860,32 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
         * @param {boolean} update_cookie Flag to update or not the cookie.        *
         */
         hideCaptions: function (hide_captions, update_cookie) {
-            var state = this.state,
-                        type, text;
+            var  hideClosedCaptionsEl = this.hideClosedCaptionsEl,
+                 state = this.state,
+                 type, text;
+
 
             if (typeof update_cookie === 'undefined') {
                 update_cookie = true;
             }
 
             if (hide_captions) {
-                type = 'hide_captions';
+                type = 'hide_transcript';
                 state.captionsHidden = true;
                 state.el.addClass('closed');
+                text = gettext('Turn on transcripts');
             } else {
-                type = 'show_captions';
+                type = 'show_transcript';
                 state.captionsHidden = false;
                 state.el.removeClass('closed');
                 this.scrollCaption();
+                text = gettext('Turn off transcripts');
             }
+
+
+            this.hideCaptionsEl
+                .attr('title', text)
+                .attr('aria-label', gettext(text));
 
             if (state.videoPlayer) {
                 state.videoPlayer.log(type, {
@@ -894,7 +904,7 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
             this.setSubtitlesHeight();
 
             if (update_cookie) {
-                $.cookie('hide_captions', state.captionsHidden, {
+                $.cookie('hide_captions', hide_captions, {
                     expires: 3650,
                     path: '/'
                 });
