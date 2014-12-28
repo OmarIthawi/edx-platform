@@ -20,8 +20,6 @@ function (Sjson, AsyncProcess) {
      * @returns {jquery Promise}
      */
     var VideoCaption = function (state) {
-        console.log('Omar: Hello World');
-
         if (!(this instanceof VideoCaption)) {
             return new VideoCaption(state);
         }
@@ -703,7 +701,7 @@ function (Sjson, AsyncProcess) {
 
                     var captions = this.sjson.getCaptions();
                     var parentEl = this.container.closest('.video-wrapper')
-                                       .find('section.caption .text')
+                                       .find('section.closed-caption .text')
                                        .text(captions[newIndex]);
 
                     this.currentIndex = newIndex;
@@ -784,7 +782,7 @@ function (Sjson, AsyncProcess) {
             var parentEl = this.container.closest('.video-wrapper');
             var videoWidth = parentEl.find('.video-player').width();
 
-            var hide_closed_captions = parentEl.find('section.caption').is(':visible');
+            var hide_closed_captions = parentEl.find('section.closed-caption').is(':visible');
 
             this.hideClosedCaptions(hide_closed_captions);
         },
@@ -812,13 +810,12 @@ function (Sjson, AsyncProcess) {
             if (hide_closed_captions) {
                 type = 'hide_closed_captions';
                 state.closedCaptionsHidden = true;
-                // TODO: `.caption` to be renamed to `.closed-caption`
-                $(this.container.context).find('section.caption').fadeOut(0);
+                $(this.container.context).find('section.closed-caption').fadeOut(0);
                 text = gettext('Turn on closed captions');
             } else {
                 type = 'show_closed_captions';
                 state.closedCaptionsHidden = false;
-                $(this.container.context).find('section.caption').fadeIn(0);
+                $(this.container.context).find('section.closed-caption').fadeIn(0);
                 text = gettext('Turn off closed captions');
             }
 
