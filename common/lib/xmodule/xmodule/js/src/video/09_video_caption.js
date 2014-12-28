@@ -4,7 +4,7 @@
 define(
 'video/09_video_caption.js',
 ['video/00_sjson.js', 'video/00_async_process.js'],
-function (Sjson, AsyncProcess) {
+function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
     /**
      * @desc VideoCaption module exports a function.
      *
@@ -16,8 +16,6 @@ function (Sjson, AsyncProcess) {
      *     are available via this object.
      *
      * @this {object} The global window object.
-     *
-     *  // TODO: How to include Draggabilly correctly?
      *
      * @returns {jquery Promise}
      */
@@ -47,6 +45,8 @@ function (Sjson, AsyncProcess) {
             this.subtitlesEl = state.el.find('ol.subtitles');
             this.container = state.el.find('.lang');
             this.hideSubtitlesEl = state.el.find('a.hide-subtitles');
+            this.transcriptToggleEl = state.el.find('span.transcript-toggle');
+            this.closedCaptionsEl = state.el.find('section.closed-caption');
 
             if (_.keys(languages).length) {
                 this.renderLanguageMenu(languages);
@@ -74,8 +74,7 @@ function (Sjson, AsyncProcess) {
                 events = [
                     'mouseover', 'mouseout', 'mousedown', 'click', 'focus', 'blur',
                     'keydown'
-                ].join(' '),
-                $videoWrapper = $(this.container.context).find('.video-wrapper');
+                ].join(' ');
 
             // Change context to VideoCaption of event handlers using `bind`.
             this.hideSubtitlesEl.on('click', this.toggle.bind(this));
@@ -136,13 +135,13 @@ function (Sjson, AsyncProcess) {
             }
 
             // Make the captions draggable
-            new Draggabilly($videoWrapper.find('section.closed-caption .text').get(0), {
+            new Draggabilly(this.closedCaptionsEl.find('.text').get(0), {
                 axis: 'y',
-                containment: $videoWrapper.get(0)
+                containment: state.el.find('.video-wrapper').get(0)
             });
 
             // Bind the transcript toggle icon
-            $videoWrapper.find('span.transcript-toggle')
+            this.transcriptToggleEl
                 .on('click', this.toggleCaptions.bind(this));
         },
 
@@ -698,9 +697,9 @@ function (Sjson, AsyncProcess) {
 
 
                     var captions = this.sjson.getCaptions();
-                    var parentEl = this.container.closest('.video-wrapper')
-                                       .find('section.closed-caption .text')
-                                       .text(captions[newIndex]);
+                    this.closedCaptionsEl
+                        .find('.text')
+                        .text(captions[newIndex]);
 
                     this.currentIndex = newIndex;
                     this.scrollCaption();
@@ -777,11 +776,7 @@ function (Sjson, AsyncProcess) {
         toggle: function (event) {
             event.preventDefault();
 
-            var parentEl = this.container.closest('.video-wrapper');
-            var videoWidth = parentEl.find('.video-player').width();
-
-            var hide_closed_captions = parentEl.find('section.closed-caption').is(':visible');
-
+            var hide_closed_captions = this.closedCaptionsEl.is(':visible');
             this.hideClosedCaptions(hide_closed_captions);
         },
 
@@ -793,10 +788,9 @@ function (Sjson, AsyncProcess) {
         *
         * @param {boolean} update_cookie Flag to update or not the cookie.
         *
-        * TODO: Make the button to have a visible state
-        *
         */
         hideClosedCaptions: function (hide_closed_captions, update_cookie) {
+            // TODO: Make the difference clear between captions and transcripts
             var hideSubtitlesEl = this.hideSubtitlesEl,
                 state = this.state,
                 type, text;
@@ -808,12 +802,12 @@ function (Sjson, AsyncProcess) {
             if (hide_closed_captions) {
                 type = 'hide_closed_captions';
                 state.closedCaptionsHidden = true;
-                $(this.container.context).find('section.closed-caption').fadeOut(0);
+                this.closedCaptionsEl.fadeOut(0);
                 text = gettext('Turn on closed captions');
             } else {
                 type = 'show_closed_captions';
                 state.closedCaptionsHidden = false;
-                $(this.container.context).find('section.closed-caption').fadeIn(0);
+                this.closedCaptionsEl.fadeIn(0);
                 text = gettext('Turn off closed captions');
             }
 
@@ -865,9 +859,8 @@ function (Sjson, AsyncProcess) {
         * @param {boolean} update_cookie Flag to update or not the cookie.        *
         */
         hideCaptions: function (hide_captions, update_cookie) {
-//            var hideTranscriptEl = this.hideSubtitlesEl, // TODO: This should be the small arrow instead
-              var state = this.state,
-                type, text;
+            var state = this.state,
+                        type, text;
 
             if (typeof update_cookie === 'undefined') {
                 update_cookie = true;
@@ -877,18 +870,12 @@ function (Sjson, AsyncProcess) {
                 type = 'hide_captions';
                 state.captionsHidden = true;
                 state.el.addClass('closed');
-//                text = gettext('Show captions'); // TODO: This should be for the small arrow
             } else {
                 type = 'show_captions';
                 state.captionsHidden = false;
                 state.el.removeClass('closed');
                 this.scrollCaption();
-//                text = gettext('Hide captions'); // TODO: This should be for the small arrow
             }
-
-//            hideTranscriptEl
-//                .attr('title', text)
-//                .text(gettext(text));
 
             if (state.videoPlayer) {
                 state.videoPlayer.log(type, {
@@ -905,7 +892,6 @@ function (Sjson, AsyncProcess) {
             }
 
             this.setSubtitlesHeight();
-            this.toggleTranscriptIcon();
 
             if (update_cookie) {
                 $.cookie('hide_captions', state.captionsHidden, {
@@ -913,16 +899,6 @@ function (Sjson, AsyncProcess) {
                     path: '/'
                 });
             }
-        },
-
-        /* @desc Changes the location / direction of the transcript toggle icon
-         *
-         * @returns {*}
-         */
-        toggleTranscriptIcon: function () {
-            var $icon = $(this.container.context).find('span.transcript-toggle i'),
-                $iconParent = $icon.parent(),
-                state = this.state;
         },
 
         /**
@@ -943,7 +919,7 @@ function (Sjson, AsyncProcess) {
 
         /**
         * @desc Sets the height of the caption container element.
-        * TODO: Shouldn't this be just `caption` instead of `subtitle`. Otherwise it is misleading.
+        * TODO: Make the difference clear between captions and transcripts i.e. shouldn't this be just `caption` instead of `subtitle`.
         */
         setSubtitlesHeight: function () {
             var height = 0,
