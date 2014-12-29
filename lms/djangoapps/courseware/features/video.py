@@ -39,7 +39,8 @@ HTML5_SOURCES_INCORRECT = [
 ]
 
 VIDEO_BUTTONS = {
-    'CC': '.hide-subtitles',
+    'CC': '.hide-closed-captions',
+    'transcripts': '.hide-captions',
     'volume': '.volume',
     'play': '.video_control.play',
     'pause': '.video_control.pause',
@@ -491,7 +492,7 @@ def select_language(_step, code):
         code=code
     )
 
-    world.css_find(VIDEO_BUTTONS["CC"])[0].mouse_over()
+    world.css_find(VIDEO_BUTTONS["transcripts"])[0].mouse_over()
     world.wait_for_present('.lang.open')
     world.css_click(selector)
 

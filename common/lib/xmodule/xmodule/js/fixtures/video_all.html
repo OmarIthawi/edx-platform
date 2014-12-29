@@ -33,7 +33,14 @@
             <section class="video-player">
               <div id="id"></div>
             </section>
+            <span tabindex="0" class="hide-captions" role="button" aria-disabled="false"
+                  title="${_('Hide transcripts')}" aria-label="${_('Hide transcripts')}">
+              <i class="icon-caret-right" aria-hidden="true"></i>
+            </span>
             <div class="video-player-post"></div>
+            <section class="closed-caption">
+                <p class="text"></p>
+            </section>
             <section class="video-controls is-hidden">
               <div class="slider"></div>
               <div>
@@ -58,7 +65,7 @@
                   <a href="#" class="add-fullscreen" title="Fill browser" role="button" aria-disabled="false">Fill Browser</a>
                   <a href="#" class="quality-control is-hidden" title="HD off" role="button" aria-disabled="false">HD off</a>
                   <div class="lang menu-container">
-                    <a href="#" class="hide-subtitles" title="Turn off captions" role="button" aria-disabled="false">Captions</a>
+                    <a href="#" class="hide-closed-captions" title="Turn off captions" role="button" aria-disabled="false">Captions</a>
                   </div>
                 </div>
               </div>
