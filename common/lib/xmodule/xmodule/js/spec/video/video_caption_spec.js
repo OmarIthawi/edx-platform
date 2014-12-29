@@ -1094,7 +1094,7 @@
                 });
 
                 // Test turned off due to flakiness (11/25/13)
-                xit('scroll the caption', function () {
+                it('scroll the caption', function () {
                     // After transcripts are shown, and the video plays for a
                     // bit.
                     jasmine.Clock.tick(1000);
