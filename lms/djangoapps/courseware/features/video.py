@@ -442,10 +442,10 @@ def set_captions_visibility_state(_step, captions_state):
     SELECTOR = '.closed .subtitles'
     if world.is_css_not_present(SELECTOR):
         if captions_state == 'closed':
-            world.css_click('.hide-subtitles')
+            world.css_click('.hide-captions')
     else:
         if captions_state != 'closed':
-            world.css_click('.hide-subtitles')
+            world.css_click('.hide-captions')
 
 
 @step('I see video menu "([^"]*)" with correct items$')

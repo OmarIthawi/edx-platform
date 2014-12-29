@@ -36,12 +36,12 @@
 
                 it('add caption control to video player', function () {
                     state = jasmine.initializePlayer();
-                    expect($('.video')).toContain('a.hide-subtitles');
+                    expect($('.video')).toContain('a.hide-captions');
                 });
 
                 it('add ARIA attributes to caption control', function () {
                     state = jasmine.initializePlayer();
-                    var captionControl = $('a.hide-subtitles');
+                    var captionControl = $('a.hide-captions');
                     expect(captionControl).toHaveAttrs({
                         'role': 'button',
                         'title': 'Turn off captions',
@@ -123,7 +123,7 @@
 
                 it('bind the hide caption button', function () {
                     state = jasmine.initializePlayer();
-                    expect($('.hide-subtitles')).toHandle('click');
+                    expect($('.hide-captions')).toHandle('click');
                 });
 
                 it('bind the mouse movement', function () {
@@ -1063,7 +1063,7 @@
                 });
 
                 it('changes ARIA attribute of caption control', function () {
-                    expect($('a.hide-subtitles'))
+                    expect($('a.hide-captions'))
                         .toHaveAttr('title', 'Turn on captions');
                 });
             });
@@ -1089,7 +1089,7 @@
                 });
 
                 it('changes ARIA attribute of caption control', function () {
-                    expect($('a.hide-subtitles'))
+                    expect($('a.hide-captions'))
                         .toHaveAttr('title', 'Turn off captions');
                 });
 
