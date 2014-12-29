@@ -3,8 +3,8 @@
 // VideoCaption module.
 define(
 'video/09_video_caption.js',
-['video/00_sjson.js', 'video/00_async_process.js'],
-function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
+['video/00_sjson.js', 'video/00_async_process.js', 'draggabilly'],
+function (Sjson, AsyncProcess, Draggabilly) { // TODO: How to include Draggabilly correctly?
     /**
      * @desc VideoCaption module exports a function.
      *
