@@ -371,7 +371,7 @@
                 });
 
                 it('captions panel is not shown', function () {
-                    expect(state.videoCaption.hideSubtitlesEl).toBeHidden();
+                    expect(state.videoCaption.hideCaptionsEl).toBeHidden();
                 });
             });
         });
@@ -593,7 +593,7 @@
             it(msg, function () {
                 spyOn(Caption, 'fetchAvailableTranslations');
                 $.ajax.andCallFake(function (settings) {
-                    settings.error([]);
+//                    settings.error([]);
                 });
 
                 state.config.transcriptLanguages = {};
@@ -604,7 +604,7 @@
                 expect(Caption.fetchAvailableTranslations).not.toHaveBeenCalled();
                 expect(Caption.hideCaptions.mostRecentCall.args)
                     .toEqual([true, false]);
-                expect(Caption.hideSubtitlesEl).toBeHidden();
+                expect(Caption.hideCaptionsEl).toBeHidden();
             });
 
             msg = 'on error: fetch available translations if there are ' +
@@ -696,7 +696,7 @@
 
                 expect($.ajaxWithPrefix).toHaveBeenCalled();
                 expect(Caption.hideCaptions).toHaveBeenCalledWith(true, false);
-                expect(Caption.hideSubtitlesEl).toBeHidden();
+                expect(Caption.hideCaptionsEl).toBeHidden();
             });
         });
 
@@ -897,7 +897,7 @@
                             controlHeight, shouldBeHeight;
 
                         state.captionsHidden = true;
-                        state.videoCaption.setSubtitlesHeight();
+                        state.videoCaption.setCaptionsHeight();
 
                         realHeight = parseInt(
                             $('.subtitles').css('maxHeight'), 10
@@ -1046,7 +1046,7 @@
             describe('when the caption is visible', function () {
                 beforeEach(function () {
                     state.el.removeClass('closed');
-                    state.videoCaption.toggle(jQuery.Event('click'));
+                    state.videoCaption.toggleCaptions(jQuery.Event('click'));
                 });
 
                 it('log the hide_transcript event', function () {
@@ -1071,7 +1071,7 @@
             describe('when the caption is hidden', function () {
                 beforeEach(function () {
                     state.el.addClass('closed');
-                    state.videoCaption.toggle(jQuery.Event('click'));
+                    state.videoCaption.toggleCaptions(jQuery.Event('click'));
                     jasmine.Clock.useMock();
                 });
 

@@ -101,6 +101,7 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
     module = __name__.replace('.video_module', '', 2)
     js = {
         'js': [
+            resource_string(module, 'js/common_static/js/vendor/draggabilly.pkgd.js'),
             resource_string(module, 'js/src/video/00_component.js'),
             resource_string(module, 'js/src/video/00_video_storage.js'),
             resource_string(module, 'js/src/video/00_resizer.js'),

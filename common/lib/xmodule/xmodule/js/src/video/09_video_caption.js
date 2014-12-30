@@ -1,15 +1,18 @@
-(function (define) {
+(function (define, Draggabilly) {
 
 // VideoCaption module.
 define(
 'video/09_video_caption.js',
 ['video/00_sjson.js', 'video/00_async_process.js'],
-function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
+function (Sjson, AsyncProcess) {
     /**
      * @desc VideoCaption module exports a function.
      *
      * @type {function}
      * @access public
+     *
+     *
+     * TODO: How to include Draggabilly correctly?
      *
      * @param {object} state - The object containing the state of the video
      *     player. All other modules, their parameters, public variables, etc.
@@ -57,11 +60,13 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                     this.hideCaptions(true);
                     this.hideClosedCaptions(true);
                     this.hideClosedCaptionsEl.hide();
+                    this.hideCaptionsEl.hide();
                 }
             } else {
                 this.hideCaptions(true, false);
                 this.hideClosedCaptions(true, false);
                 this.hideClosedCaptionsEl.hide();
+                this.hideCaptionsEl.hide();
             }
         },
 
@@ -136,11 +141,11 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                 this.subtitlesEl.on('scroll', state.videoControl.showControls);
             }
 
-            // TODO: Make the captions draggable
-//            new Draggabilly(this.closedCaptionsEl.find('.text').get(0), {
-//                axis: 'y',
-//                containment: state.el.find('.video-wrapper').get(0)
-//            });
+            // Make the captions draggable
+            new Draggabilly(this.closedCaptionsEl.find('.text').get(0), {
+                axis: 'y',
+                containment: state.el.find('.video-wrapper').get(0)
+            });
 
             // Bind the captions toggle icon
             this.hideCaptionsEl
@@ -302,6 +307,7 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                         self.hideCaptions(true, false);
                         self.hideClosedCaptions(true, false);
                         self.hideClosedCaptionsEl.hide();
+                        self.hideCaptionsEl.hide();
                     }
                 }
             });
@@ -341,6 +347,7 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                     self.hideCaptions(true, false);
                     self.hideClosedCaptions(true, false);
                     self.hideClosedCaptionsEl.hide();
+                    self.hideCaptionsEl.hide();
                 }
             });
         },
@@ -822,16 +829,6 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
                 });
             }
 
-            if (state.resizer) {
-                if (state.isFullScreen) {
-                    state.resizer.setMode('both');
-                } else {
-                    state.resizer.alignByWidthOnly();
-                }
-            }
-
-            this.setSubtitlesHeight();
-
             if (update_cookie) {
                 $.cookie('hide_closed_captions', hide_closed_captions, {
                     expires: 3650,
@@ -956,4 +953,4 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
     return VideoCaption;
 });
 
-}(RequireJS.define));
+}(RequireJS.define, Draggabilly));
