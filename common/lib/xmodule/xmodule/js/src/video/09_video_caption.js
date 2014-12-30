@@ -3,8 +3,8 @@
 // VideoCaption module.
 define(
 'video/09_video_caption.js',
-['video/00_sjson.js', 'video/00_async_process.js', 'draggabilly'],
-function (Sjson, AsyncProcess, Draggabilly) { // TODO: How to include Draggabilly correctly?
+['video/00_sjson.js', 'video/00_async_process.js'],
+function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
     /**
      * @desc VideoCaption module exports a function.
      *
@@ -83,7 +83,7 @@ function (Sjson, AsyncProcess, Draggabilly) { // TODO: How to include Draggabill
             this.subtitlesEl
                 .on({
                     mouseenter: this.onMouseEnter.bind(this),
-                    mouseleave: this.onMouseLeave.bind(this),
+                    mouseleave: this.onMouseLeave.bind(this)
                     mousemove: this.onMovement.bind(this),
                     mousewheel: this.onMovement.bind(this),
                     DOMMouseScroll: this.onMovement.bind(this)
@@ -136,11 +136,11 @@ function (Sjson, AsyncProcess, Draggabilly) { // TODO: How to include Draggabill
                 this.subtitlesEl.on('scroll', state.videoControl.showControls);
             }
 
-            // Make the captions draggable
-            new Draggabilly(this.closedCaptionsEl.find('.text').get(0), {
-                axis: 'y',
-                containment: state.el.find('.video-wrapper').get(0)
-            });
+            // TODO: Make the captions draggable
+//            new Draggabilly(this.closedCaptionsEl.find('.text').get(0), {
+//                axis: 'y',
+//                containment: state.el.find('.video-wrapper').get(0)
+//            });
 
             // Bind the captions toggle icon
             this.hideCaptionsEl
