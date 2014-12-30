@@ -83,7 +83,7 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
             this.subtitlesEl
                 .on({
                     mouseenter: this.onMouseEnter.bind(this),
-                    mouseleave: this.onMouseLeave.bind(this)
+                    mouseleave: this.onMouseLeave.bind(this),
                     mousemove: this.onMovement.bind(this),
                     mousewheel: this.onMovement.bind(this),
                     DOMMouseScroll: this.onMovement.bind(this)
