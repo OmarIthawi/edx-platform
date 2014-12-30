@@ -44,7 +44,7 @@
                     var captionControl = $('a.hide-captions');
                     expect(captionControl).toHaveAttrs({
                         'role': 'button',
-                        'title': 'Turn off captions',
+                        'title': 'Turn off transcripts',
                         'aria-disabled': 'false'
                     });
                 });
@@ -1064,7 +1064,7 @@
 
                 it('changes ARIA attribute of caption control', function () {
                     expect($('a.hide-captions'))
-                        .toHaveAttr('title', 'Turn on captions');
+                        .toHaveAttr('title', 'Turn on transcripts');
                 });
             });
 
@@ -1090,7 +1090,7 @@
 
                 it('changes ARIA attribute of caption control', function () {
                     expect($('a.hide-captions'))
-                        .toHaveAttr('title', 'Turn off captions');
+                        .toHaveAttr('title', 'Turn off transcripts');
                 });
 
                 // Test turned off due to flakiness (11/25/13)

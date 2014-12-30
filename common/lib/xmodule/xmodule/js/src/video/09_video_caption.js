@@ -44,7 +44,7 @@ function (Sjson, AsyncProcess) { // TODO: How to include Draggabilly correctly?
             this.loaded = false;
             this.container = state.el.find('.lang');
 
-            this.hideCaptionsEl = state.el.find('span.hide-captions');
+            this.hideCaptionsEl = state.el.find('a.hide-captions');
             this.subtitlesEl = state.el.find('ol.subtitles');
 
             this.hideClosedCaptionsEl = state.el.find('a.hide-closed-captions');

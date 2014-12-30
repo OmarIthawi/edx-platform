@@ -662,7 +662,7 @@ div.video {
     }
   }
 
-  span.hide-captions {
+  a.hide-captions {
     position: absolute;
     right: -8px;
     top: 50%;
@@ -718,7 +718,7 @@ div.video {
       display: none;
     }
 
-    span.hide-captions {
+    a.hide-captions {
        i:before {
          content: "\f0d9"; // Overriding `.icon-caret-right` to make it `.icon-caret-left`
        }
@@ -743,7 +743,7 @@ div.video {
     vertical-align: middle;
     border-radius: 0;
 
-    span.hide-captions {
+    a.hide-captions {
        right: $captionsWidthOpen + $captionsButtonWidth;
 
        &, i {
@@ -766,7 +766,7 @@ div.video {
         }
       }
 
-      span.hide-captions {
+      a.hide-captions {
         right: $captionsButtonWidth;
       }
 
