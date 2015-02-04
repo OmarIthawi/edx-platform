@@ -367,28 +367,6 @@ def _filter_optouts_from_recipients(to_list, course_id):
     return to_list, num_optout
 
 
-def _get_source_address(course_id, course_title):
-    """
-    Calculates an email address to be used as the 'from-address' for sent emails.
-
-    Makes a unique from name and address for each course, e.g.
-
-        "COURSE_TITLE" Course Staff <coursenum-no-reply@courseupdates.edx.org>
-
-    """
-    course_title_no_quotes = re.sub(r'"', '', course_title)
-
-    # For the email address, get the course.  Then make sure that it can be used
-    # in an email address, by substituting a '_' anywhere a non-(ascii, period, or dash)
-    # character appears.
-    from_addr = u'"{0}" Course Staff <{1}-{2}>'.format(
-        course_title_no_quotes,
-        re.sub(r"[^\w.-]", '_', course_id.course),
-        settings.BULK_EMAIL_DEFAULT_FROM_EMAIL
-    )
-    return from_addr
-
-
 def _send_course_email(entry_id, email_id, to_list, global_email_context, subtask_status):
     """
     Performs the email sending task.
@@ -439,10 +417,6 @@ def _send_course_email(entry_id, email_id, to_list, global_email_context, subtas
     course_title = global_email_context['course_title']
     subject = "[" + course_title + "] " + course_email.subject
 
-    # use the email from address in the CourseEmail, if it is present, otherwise compute it
-    from_addr = course_email.from_addr if course_email.from_addr else \
-        _get_source_address(course_email.course_id, course_title)
-
     # use the CourseEmailTemplate that was associated with the CourseEmail
     course_email_template = course_email.get_template()
     try:
@@ -474,7 +448,7 @@ def _send_course_email(entry_id, email_id, to_list, global_email_context, subtas
             email_msg = EmailMultiAlternatives(
                 subject,
                 plaintext_msg,
-                from_addr,
+                course_email.from_addr_with_default,
                 [email],
                 connection=connection
             )

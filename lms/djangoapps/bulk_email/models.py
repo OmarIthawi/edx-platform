@@ -12,14 +12,17 @@ file and check it in at the same time as your model changes. To do that,
 
 """
 import logging
+import re
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models, transaction
+from django.utils.translation import ugettext as _
 
 from html_to_text import html_to_text
 from mail_utils import wrap_message
 
 from xmodule_django.models import CourseKeyField
+from courseware.courses import get_course
 from util.keyword_substitution import substitute_keywords_with_data
 
 log = logging.getLogger(__name__)
@@ -110,6 +113,40 @@ class CourseEmail(Email):
         course_email.save_now()
 
         return course_email
+
+    @property
+    def from_addr_with_default(self):
+        """
+        Get the `self.from_addr` and defaults to a unique from name and address for each course.
+
+            e.g. "COURSE_TITLE" Course Staff <coursenum-no-reply@courseupdates.edx.org>
+
+        """
+
+        if self.from_addr:
+            return self.from_addr
+
+        # Fetch the course object.
+        course = get_course(self.course_id)
+
+        if course is None:
+            msg = u"CourseEmail %s: course not found: %s"
+            log.error(msg, unicode(self), self.course_id)
+            raise ValueError(msg % (unicode(self), self.course_id))
+
+        course_title = course.display_name
+        course_title_no_quotes = re.sub(r'"', '', course_title)
+
+        # For the email address, get the course.  Then make sure that it can be used
+        # in an email address, by substituting a '_' anywhere a non-(ascii, period, or dash)
+        # character appears.
+        # Translators: This is the email subject when the course staff emails the students
+        from_addr = _('"{course_title}" Course Staff <{course_id}-{from_email}>').format(
+            course_title=course_title_no_quotes,
+            course_id=re.sub(r"[^\w.-]", '_', self.course_id.course),
+            from_email=settings.BULK_EMAIL_DEFAULT_FROM_EMAIL
+        )
+        return from_addr
 
     @transaction.autocommit
     def save_now(self):
